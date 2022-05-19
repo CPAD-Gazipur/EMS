@@ -21,7 +21,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
+  TextEditingController emailLoginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordLoginController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
   late AuthController authController;
@@ -101,7 +103,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             formKey: formKey,
             authController: authController,
             emailController: emailController,
+            emailLoginController: emailLoginController,
             passwordController: passwordController,
+            passwordLoginController: passwordLoginController,
           ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 500),
@@ -211,7 +215,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             formKey: formKey,
             authController: authController,
             emailController: emailController,
+            emailLoginController: emailLoginController,
             passwordController: passwordController,
+            passwordLoginController: passwordLoginController,
           ),
           Positioned(
             top: MediaQuery.of(context).size.height - 100,
@@ -235,13 +241,19 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       buildSocialButton(
-                          'Facebook',
-                          'assets/images/facebook_icon.png',
-                          AppColors.facebookColor),
+                        title: 'Facebook',
+                        image: 'assets/images/facebook_icon.png',
+                        backgroundColor: AppColors.facebookColor,
+                        isGoogle: false,
+                        authController: authController,
+                      ),
                       buildSocialButton(
-                          'Google',
-                          'assets/images/google_icon.png',
-                          AppColors.googleColor),
+                        title: 'Google',
+                        image: 'assets/images/google_icon.png',
+                        backgroundColor: AppColors.googleColor,
+                        isGoogle: true,
+                        authController: authController,
+                      ),
                     ],
                   ),
                 ),
@@ -253,11 +265,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     );
   }
 
-
   Widget buildSignupSection() {
     return Container(
       margin: const EdgeInsets.only(
-        top: 10,
+        top: 20,
+        bottom: 30,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -275,8 +287,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   'Email is required!',
                 );
                 return '';
-              }
-              if (!input.contains('@')) {
+              } else if (!input.contains('@')) {
                 Get.snackbar(
                   'Warning',
                   'Email is invalid!',
@@ -298,8 +309,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   'Password is required!',
                 );
                 return '';
-              }
-              if (input.length < 6) {
+              } else if (input.length < 6) {
                 Get.snackbar(
                   'Warning',
                   'Password must be 6 digit or more!',
@@ -321,8 +331,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   'Confirm Password is required!',
                 );
                 return '';
-              }
-              if (input != passwordController.text.trim()) {
+              } else if (input != passwordController.text.trim()) {
                 Get.snackbar(
                   'Warning',
                   'Password not match try again!',
@@ -334,7 +343,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
           const SizedBox(
             height: 10,
           ),
-          if (isSignupScreen)
+          /*if (isSignupScreen)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -411,7 +420,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   ),
                 ),
               ],
-            ),
+            ),*/
           if (isSignupScreen)
             Container(
               margin: const EdgeInsets.only(top: 20, right: 10, left: 10),
@@ -442,6 +451,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     return Container(
       margin: const EdgeInsets.only(
         top: 20,
+        bottom: 30,
       ),
       child: Column(
         children: [
@@ -450,7 +460,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             hintText: 'example@gmail.com',
             isPassword: false,
             isEmail: true,
-            controller: emailController,
+            controller: emailLoginController,
             validator: (String input) {
               if (input.isEmpty) {
                 Get.snackbar(
@@ -458,14 +468,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   'Email is required!',
                 );
                 return '';
-              }
-              if (!input.contains('@')) {
+              } else if (!input.contains('@')) {
                 Get.snackbar(
                   'Warning',
                   'Email is invalid!',
                 );
-                return '';
               }
+              return '';
             },
           ),
           buildTextField(
@@ -473,7 +482,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             hintText: '***********',
             isPassword: true,
             isEmail: false,
-            controller: passwordController,
+            controller: passwordLoginController,
             validator: (String input) {
               if (input.isEmpty) {
                 Get.snackbar(
@@ -481,8 +490,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   'Password is required!',
                 );
                 return '';
-              }
-              if (input.length < 6) {
+              } else if (input.length < 6) {
                 Get.snackbar(
                   'Warning',
                   'Password must be 6 digit or more!',

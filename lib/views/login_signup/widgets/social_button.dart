@@ -1,8 +1,19 @@
+import 'package:ems/controller/auth_contoller.dart';
 import 'package:flutter/material.dart';
 
-Widget buildSocialButton(String title, String image, Color backgroundColor) {
+Widget buildSocialButton({
+  required String title,
+  required String image,
+  required Color backgroundColor,
+  required bool isGoogle,
+  required AuthController authController,
+}) {
   return TextButton(
-    onPressed: () {},
+    onPressed: () {
+      if(isGoogle){
+        authController.signInWithGoogle();
+      }
+    },
     style: TextButton.styleFrom(
       side: const BorderSide(
         color: Colors.grey,

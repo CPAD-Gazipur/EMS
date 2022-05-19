@@ -2,6 +2,7 @@ import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/profile/create_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -37,4 +38,36 @@ class AuthController extends GetxController {
       Get.snackbar('Warning',error);
     });
   }
+
+  signInWithGoogle() async {
+
+    isLoading(true);
+
+    final GoogleSignInAccount? googleSignIn = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth = await googleSignIn?.authentication;
+
+    isLoading(false);
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    isLoading(false);
+
+   await FirebaseAuth.instance.signInWithCredential(credential)
+    .then((value) {
+     isLoading(false);
+     Get.to(() => const HomeScreen());
+   }).catchError((e){
+     isLoading(false);
+     String error = e.toString().split("] ")[1];
+     Get.snackbar('Warning',error);
+   });
+  }
 }
+
+
+
+

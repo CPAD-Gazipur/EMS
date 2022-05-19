@@ -9,7 +9,9 @@ Widget buildBottomHalfContainer({
   required GlobalKey<FormState> formKey,
   required AuthController authController,
   required TextEditingController emailController,
+  required TextEditingController emailLoginController,
   required TextEditingController passwordController,
+  required TextEditingController passwordLoginController,
 }) {
   return AnimatedPositioned(
     duration: const Duration(milliseconds: 500),
@@ -39,19 +41,25 @@ Widget buildBottomHalfContainer({
             ? GestureDetector(
                 onTap: () {
                   if (!formKey.currentState!.validate()) {
-                    return;
+                    print("Form Key Error");
+                    return ;
                   }
-                  if (isSignupScreen) {
-                    authController.signup(
-                      email: emailController.text.trim(),
-                      password: passwordController.text.trim(),
-                    );
-                  } else {
-                    authController.login(
-                      email: emailController.text.trim(),
-                      password: passwordController.text.trim(),
-                    );
+                  else{
+                    if (isSignupScreen) {
+                      print("SignUp OK");
+                      authController.signup(
+                        email: emailController.text.trim(),
+                        password: passwordController.text.trim(),
+                      );
+                    } else {
+                      print("Login OK");
+                      authController.login(
+                        email: emailLoginController.text.trim(),
+                        password: passwordLoginController.text.trim(),
+                      );
+                    }
                   }
+
                 },
                 child: Container(
                   decoration: BoxDecoration(
