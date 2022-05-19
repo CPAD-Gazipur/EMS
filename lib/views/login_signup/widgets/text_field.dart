@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
 
 Widget buildTextField(
-    IconData iconData, String hintText, bool isPassword, bool isEmail) {
+    {required IconData iconData,required String hintText,required bool isPassword,required bool isEmail,required TextEditingController controller, required Function validator}) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8),
-    child: TextField(
+    child: TextFormField(
+      controller: controller,
+      validator: (input) => validator(input),
       obscureText: isPassword,
       keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
       decoration: InputDecoration(
@@ -25,6 +27,22 @@ Widget buildTextField(
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: AppColors.textColorBlue,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(12),
+            ),
+          ),
+          errorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.redAccent,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(12),
+            ),
+          ),
+          focusedErrorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.redAccent,
             ),
             borderRadius: BorderRadius.all(
               Radius.circular(12),

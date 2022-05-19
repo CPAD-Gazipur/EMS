@@ -1,8 +1,10 @@
 import 'package:ems/config/app_colors.dart';
+import 'package:ems/controller/auth_contoller.dart';
 import 'package:ems/views/login_signup/widgets/bottom_half_container.dart';
 import 'package:ems/views/login_signup/widgets/social_button.dart';
 import 'package:ems/views/login_signup/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
@@ -12,11 +14,24 @@ class LoginSignupScreen extends StatefulWidget {
 }
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
-
   bool isMale = true;
   bool isSignupScreen = true;
   bool isRememberMe = false;
   String title = 'Signup';
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
+  late AuthController authController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    authController = Get.put(AuthController());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +95,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               ),
             ),
           ),
-          buildBottomHalfContainer(true,isSignupScreen),
+          buildBottomHalfContainer(
+            showShadow: true,
+            isSignupScreen: isSignupScreen,
+            formKey: formKey,
+            authController: authController,
+            emailController: emailController,
+            passwordController: passwordController,
+          ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
-            top: isSignupScreen? 180 : 220,
+            top: isSignupScreen ? 180 : 220,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
@@ -169,14 +191,28 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         ),
                       ],
                     ),
-                    if (isSignupScreen) buildSignupSection(),
-                    if (!isSignupScreen) buildLoginSection(),
+                    Form(
+                      key: formKey,
+                      child: Column(
+                        children: [
+                          if (isSignupScreen) buildSignupSection(),
+                          if (!isSignupScreen) buildLoginSection(),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          buildBottomHalfContainer(false,isSignupScreen),
+          buildBottomHalfContainer(
+            showShadow: false,
+            isSignupScreen: isSignupScreen,
+            formKey: formKey,
+            authController: authController,
+            emailController: emailController,
+            passwordController: passwordController,
+          ),
           Positioned(
             top: MediaQuery.of(context).size.height - 100,
             right: 0,
@@ -217,6 +253,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     );
   }
 
+
   Widget buildSignupSection() {
     return Container(
       margin: const EdgeInsets.only(
@@ -226,22 +263,73 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           buildTextField(
-            Icons.account_circle_outlined,
-            'User Name',
-            false,
-            false,
+            iconData: Icons.email_outlined,
+            hintText: 'Email Address',
+            isPassword: false,
+            isEmail: true,
+            controller: emailController,
+            validator: (String input) {
+              if (input.isEmpty) {
+                Get.snackbar(
+                  'Warning',
+                  'Email is required!',
+                );
+                return '';
+              }
+              if (!input.contains('@')) {
+                Get.snackbar(
+                  'Warning',
+                  'Email is invalid!',
+                );
+                return '';
+              }
+            },
           ),
           buildTextField(
-            Icons.email_outlined,
-            'Email Address',
-            false,
-            true,
+            iconData: Icons.lock_outline,
+            hintText: 'Password',
+            isPassword: true,
+            isEmail: false,
+            controller: passwordController,
+            validator: (String input) {
+              if (input.isEmpty) {
+                Get.snackbar(
+                  'Warning',
+                  'Password is required!',
+                );
+                return '';
+              }
+              if (input.length < 6) {
+                Get.snackbar(
+                  'Warning',
+                  'Password must be 6 digit or more!',
+                );
+                return '';
+              }
+            },
           ),
           buildTextField(
-            Icons.lock_outline,
-            'Password',
-            true,
-            false,
+            iconData: Icons.lock_outline,
+            hintText: 'Confirm Password',
+            isPassword: true,
+            isEmail: false,
+            controller: confirmPasswordController,
+            validator: (String input) {
+              if (input.isEmpty) {
+                Get.snackbar(
+                  'Warning',
+                  'Confirm Password is required!',
+                );
+                return '';
+              }
+              if (input != passwordController.text.trim()) {
+                Get.snackbar(
+                  'Warning',
+                  'Password not match try again!',
+                );
+                return '';
+              }
+            },
           ),
           const SizedBox(
             height: 10,
@@ -350,7 +438,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     );
   }
 
-  Widget buildLoginSection(){
+  Widget buildLoginSection() {
     return Container(
       margin: const EdgeInsets.only(
         top: 20,
@@ -358,16 +446,50 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       child: Column(
         children: [
           buildTextField(
-            Icons.email_outlined,
-            'example@gmail.com',
-            false,
-            true,
+            iconData: Icons.email_outlined,
+            hintText: 'example@gmail.com',
+            isPassword: false,
+            isEmail: true,
+            controller: emailController,
+            validator: (String input) {
+              if (input.isEmpty) {
+                Get.snackbar(
+                  'Warning',
+                  'Email is required!',
+                );
+                return '';
+              }
+              if (!input.contains('@')) {
+                Get.snackbar(
+                  'Warning',
+                  'Email is invalid!',
+                );
+                return '';
+              }
+            },
           ),
           buildTextField(
-            Icons.lock_outline,
-            '********',
-            true,
-            false,
+            iconData: Icons.lock_outline,
+            hintText: '***********',
+            isPassword: true,
+            isEmail: false,
+            controller: passwordController,
+            validator: (String input) {
+              if (input.isEmpty) {
+                Get.snackbar(
+                  'Warning',
+                  'Password is required!',
+                );
+                return '';
+              }
+              if (input.length < 6) {
+                Get.snackbar(
+                  'Warning',
+                  'Password must be 6 digit or more!',
+                );
+                return '';
+              }
+            },
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -384,7 +506,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     },
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
                         isRememberMe = !isRememberMe;
                       });
@@ -417,7 +539,4 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       ),
     );
   }
-
-
-
 }

@@ -1,7 +1,16 @@
+import 'package:ems/controller/auth_contoller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../config/app_colors.dart';
 
-Widget buildBottomHalfContainer(bool showShadow, bool isSignupScreen) {
+Widget buildBottomHalfContainer({
+  required bool showShadow,
+  required bool isSignupScreen,
+  required GlobalKey<FormState> formKey,
+  required AuthController authController,
+  required TextEditingController emailController,
+  required TextEditingController passwordController,
+}) {
   return AnimatedPositioned(
     duration: const Duration(milliseconds: 500),
     curve: Curves.easeInOut,
@@ -27,32 +36,57 @@ Widget buildBottomHalfContainer(bool showShadow, bool isSignupScreen) {
           ],
         ),
         child: !showShadow
-            ? Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                Colors.blue,
-                AppColors.backGroundColor,
-              ],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            ),
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 2,
-                spreadRadius: 1,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.arrow_forward_outlined,
-            color: Colors.white,
-            size: 30,
-          ),
-        )
+            ? GestureDetector(
+                onTap: () {
+                  if (!formKey.currentState!.validate()) {
+                    return;
+                  }
+                  if (isSignupScreen) {
+                    authController.signup(
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim(),
+                    );
+                  } else {
+                    authController.login(
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim(),
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Colors.blue,
+                        AppColors.backGroundColor,
+                      ],
+                      begin: Alignment.bottomRight,
+                      end: Alignment.topLeft,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 2,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Obx(() => authController.isLoading.value
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.arrow_forward_outlined,
+                          color: Colors.white,
+                          size: 30,
+                        )),
+                ),
+              )
             : const Center(),
       ),
     ),
