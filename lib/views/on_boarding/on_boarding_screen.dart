@@ -1,5 +1,6 @@
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/views/login_signup/login_signup_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class OnBoardingScreen extends StatelessWidget {
@@ -46,6 +47,7 @@ class OnBoardingScreen extends StatelessWidget {
               child: Image.asset(
                 'assets/images/event.jpg',
                 fit: BoxFit.cover,
+                height: kIsWeb ? 450 : null,
               ),
             ),
             const SizedBox(

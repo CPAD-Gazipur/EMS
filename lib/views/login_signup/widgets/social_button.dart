@@ -1,4 +1,5 @@
 import 'package:ems/controller/auth_contoller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Widget buildSocialButton({
@@ -10,7 +11,8 @@ Widget buildSocialButton({
 }) {
   return TextButton(
     onPressed: () {
-      if(isGoogle){
+      if (isGoogle) {
+
         authController.signInWithGoogle();
       }
     },

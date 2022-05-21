@@ -25,6 +25,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordLoginController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController forgetPasswordController = TextEditingController();
 
   late AuthController authController;
 
@@ -473,8 +474,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   'Warning',
                   'Email is invalid!',
                 );
+                return '';
               }
-              return '';
             },
           ),
           buildTextField(
@@ -531,7 +532,61 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ],
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.defaultDialog(
+                    title: 'Forget Password ?',
+                    content: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: buildTextField(
+                            iconData: Icons.email_outlined,
+                            hintText: 'Enter your email here',
+                            isPassword: false,
+                            isEmail: true,
+                            controller: forgetPasswordController,
+                            validator: (String input) {
+                              if (input.isEmpty) {
+                                Get.snackbar(
+                                  'Warning',
+                                  'Email is required!',
+                                );
+                                return '';
+                              } else if (!input.contains('@')) {
+                                Get.snackbar(
+                                  'Warning',
+                                  'Email is invalid!',
+                                );
+                                return '';
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: MaterialButton(
+                            onPressed: () {
+                              authController.forgetPassword(
+                                email: forgetPasswordController.text.trim(),
+                              );
+                            },
+                            minWidth: MediaQuery.of(context).size.width - 30,
+                            color: Colors.blue,
+                            child: const Text(
+                              'Send',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
                 child: const Text(
                   'Forget Password?',
                   style: TextStyle(

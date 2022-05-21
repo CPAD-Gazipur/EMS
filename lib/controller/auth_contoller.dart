@@ -20,7 +20,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning',error);
+      Get.snackbar('Warning', error);
     });
   }
 
@@ -35,17 +35,17 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning',error);
+      Get.snackbar('Warning', error);
     });
   }
 
-  signInWithGoogle() async {
-
+  void signInWithGoogle() async {
     isLoading(true);
 
     final GoogleSignInAccount? googleSignIn = await GoogleSignIn().signIn();
 
-    final GoogleSignInAuthentication? googleAuth = await googleSignIn?.authentication;
+    final GoogleSignInAuthentication? googleAuth =
+        await googleSignIn?.authentication;
 
     isLoading(false);
 
@@ -56,18 +56,45 @@ class AuthController extends GetxController {
 
     isLoading(false);
 
-   await FirebaseAuth.instance.signInWithCredential(credential)
-    .then((value) {
-     isLoading(false);
-     Get.to(() => const HomeScreen());
-   }).catchError((e){
-     isLoading(false);
-     String error = e.toString().split("] ")[1];
-     Get.snackbar('Warning',error);
-   });
+    await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+      isLoading(false);
+      Get.to(() => const HomeScreen());
+    }).catchError((e) {
+      isLoading(false);
+      String error = e.toString().split("] ")[1];
+      Get.snackbar('Warning', error);
+    });
+  }
+
+  void signInWithGoogleWeb() async {
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+
+    try {
+      await googleSignIn.signIn();
+    } catch (e) {
+      String error = e.toString().split("] ")[1];
+      Get.snackbar('Warning', error);
+    }
+  }
+
+  void forgetPassword({required String email}) {
+    isLoading(true);
+
+    auth.sendPasswordResetEmail(email: email).then((value) {
+      isLoading(false);
+      Get.back();
+      Get.snackbar(
+          'Email Sent', 'We have send an Email to reset your password.');
+
+    }).catchError((e) {
+      isLoading(false);
+      Get.snackbar(
+          'Warning', 'Error in sending password reset link at $e');
+    });
   }
 }
-
-
-
-

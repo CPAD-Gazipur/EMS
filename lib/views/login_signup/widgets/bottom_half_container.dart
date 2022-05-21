@@ -41,7 +41,6 @@ Widget buildBottomHalfContainer({
             ? GestureDetector(
                 onTap: () {
                   if (!formKey.currentState!.validate()) {
-                    print("Form Key Error");
                     return ;
                   }
                   else{
