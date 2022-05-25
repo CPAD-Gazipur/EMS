@@ -246,6 +246,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         backgroundColor: AppColors.facebookColor,
                         isGoogle: false,
                         authController: authController,
+                        isSignupScreen: isSignupScreen,
                       ),
                       buildSocialButton(
                         title: 'Google',
@@ -253,6 +254,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         backgroundColor: AppColors.googleColor,
                         isGoogle: true,
                         authController: authController,
+                        isSignupScreen: isSignupScreen,
                       ),
                     ],
                   ),

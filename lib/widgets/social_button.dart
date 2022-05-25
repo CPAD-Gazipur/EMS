@@ -7,12 +7,12 @@ Widget buildSocialButton({
   required Color backgroundColor,
   required bool isGoogle,
   required AuthController authController,
+  required bool isSignupScreen,
 }) {
   return TextButton(
     onPressed: () {
       if (isGoogle) {
-
-        authController.signInWithGoogle();
+        authController.signInWithGoogle(isSignupScreen);
       }
     },
     style: TextButton.styleFrom(

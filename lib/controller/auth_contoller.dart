@@ -45,7 +45,7 @@ class AuthController extends GetxController {
     });
   }
 
-  void signInWithGoogle() async {
+  void signInWithGoogle(bool isSignupScreen) async {
     isLoading(true);
 
     final GoogleSignInAccount? googleSignIn = await GoogleSignIn().signIn();
@@ -64,7 +64,13 @@ class AuthController extends GetxController {
 
     await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       isLoading(false);
-      Get.to(() => const HomeScreen());
+      if(isSignupScreen){
+        Get.to(() => const ProfileScreen());
+      }
+      else{
+        Get.offAll(()=> const HomeScreen());
+      }
+
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
