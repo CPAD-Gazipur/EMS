@@ -1,8 +1,8 @@
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/auth_contoller.dart';
-import 'package:ems/views/login_signup/widgets/bottom_half_container.dart';
-import 'package:ems/views/login_signup/widgets/social_button.dart';
-import 'package:ems/views/login_signup/widgets/text_field.dart';
+import 'package:ems/widgets/bottom_half_container.dart';
+import 'package:ems/widgets/social_button.dart';
+import 'package:ems/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +14,6 @@ class LoginSignupScreen extends StatefulWidget {
 }
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
-  bool isMale = true;
   bool isSignupScreen = true;
   bool isRememberMe = false;
   String title = 'Signup';
@@ -279,7 +278,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             iconData: Icons.email_outlined,
             hintText: 'Email Address',
             isPassword: false,
-            isEmail: true,
+            textInputType: TextInputType.emailAddress,
             controller: emailController,
             validator: (String input) {
               if (input.isEmpty) {
@@ -301,7 +300,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             iconData: Icons.lock_outline,
             hintText: 'Password',
             isPassword: true,
-            isEmail: false,
+            textInputType: TextInputType.text,
             controller: passwordController,
             validator: (String input) {
               if (input.isEmpty) {
@@ -323,7 +322,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             iconData: Icons.lock_outline,
             hintText: 'Confirm Password',
             isPassword: true,
-            isEmail: false,
+            textInputType: TextInputType.text,
             controller: confirmPasswordController,
             validator: (String input) {
               if (input.isEmpty) {
@@ -345,83 +344,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             height: 10,
           ),
           /*if (isSignupScreen)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isMale = true;
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.textColor1,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                          color: isMale ? AppColors.textColor2 : null,
-                        ),
-                        child: Icon(
-                          Icons.account_circle_outlined,
-                          color: isMale ? Colors.white : AppColors.iconColor,
-                        ),
-                      ),
-                      Text(
-                        'Male',
-                        style: TextStyle(
-                          color: AppColors.textColor1,
-                          fontWeight:
-                              isMale ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isMale = false;
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.textColor1,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                          color: isMale ? null : AppColors.textColor2,
-                        ),
-                        child: Icon(
-                          Icons.account_circle_outlined,
-                          color: isMale ? AppColors.iconColor : Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'Female',
-                        style: TextStyle(
-                          color: AppColors.textColor1,
-                          fontWeight:
-                              isMale ? FontWeight.normal : FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),*/
+            */
           if (isSignupScreen)
             Container(
               margin: const EdgeInsets.only(top: 20, right: 10, left: 10),
@@ -460,7 +383,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             iconData: Icons.email_outlined,
             hintText: 'example@gmail.com',
             isPassword: false,
-            isEmail: true,
+            textInputType: TextInputType.emailAddress,
             controller: emailLoginController,
             validator: (String input) {
               if (input.isEmpty) {
@@ -482,7 +405,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             iconData: Icons.lock_outline,
             hintText: '***********',
             isPassword: true,
-            isEmail: false,
+            textInputType: TextInputType.text,
             controller: passwordLoginController,
             validator: (String input) {
               if (input.isEmpty) {
@@ -543,7 +466,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             iconData: Icons.email_outlined,
                             hintText: 'Enter your email here',
                             isPassword: false,
-                            isEmail: true,
+                            textInputType: TextInputType.emailAddress,
                             controller: forgetPasswordController,
                             validator: (String input) {
                               if (input.isEmpty) {

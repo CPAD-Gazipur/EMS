@@ -22,6 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Get Photo for profile image</string>
+	<key>NSCameraUsageDescription</key>
+    <string>Get Camera for profile image</string>
+    <key>NSMicrophoneUsageDescription</key>
+     <string>Get Microphone for profile image</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

@@ -1,7 +1,7 @@
 import 'package:ems/controller/auth_contoller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../config/app_colors.dart';
+import '../config/app_colors.dart';
 
 Widget buildBottomHalfContainer({
   required bool showShadow,
@@ -45,13 +45,11 @@ Widget buildBottomHalfContainer({
                   }
                   else{
                     if (isSignupScreen) {
-                      print("SignUp OK");
                       authController.signup(
                         email: emailController.text.trim(),
                         password: passwordController.text.trim(),
                       );
                     } else {
-                      print("Login OK");
                       authController.login(
                         email: emailLoginController.text.trim(),
                         password: passwordLoginController.text.trim(),
