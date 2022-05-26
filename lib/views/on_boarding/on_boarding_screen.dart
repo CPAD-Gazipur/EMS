@@ -1,5 +1,5 @@
 import 'package:ems/config/app_colors.dart';
-import 'package:ems/views/login_signup/login_signup_screen.dart';
+import 'package:ems/views/home/home_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -116,7 +116,7 @@ class OnBoardingScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => const LoginSignupScreen(),
+                              builder: (_) => const HomeScreen(),
                             ),
                           );
                         },

@@ -15,6 +15,7 @@ class AuthController extends GetxController {
   var isLoading = false.obs;
   var isProfileDataUploading = false.obs;
 
+
   void login({required String email, required String password}) {
     isLoading(true);
 

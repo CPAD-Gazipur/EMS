@@ -5,6 +5,7 @@ import 'package:ems/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../config/app_colors.dart';
 
@@ -342,7 +343,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       lastDate: DateTime(2101),
     );
     if (picked != null) {
-      dateRangeController.text = '${picked.day}-${picked.month}-${picked.year}';
+      final DateFormat formatter = DateFormat('MMM dd, yyyy');
+      dateRangeController.text  = formatter.format(picked);
     }
   }
 
