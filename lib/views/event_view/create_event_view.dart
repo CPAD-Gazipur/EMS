@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/widgets/icon_with_title.dart';
 import 'package:ems/widgets/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,9 +27,9 @@ class _CreateEventViewState extends State<CreateEventView> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   List<EventMediaModel> media = [];
-  List<Map<String,dynamic>> mediaUrls = [];
+  List<Map<String, dynamic>> mediaUrls = [];
 
-  String dropDownValue = 'Open';
+  String inviteDropDownValue = 'Open';
 
   List dropDownList = ['Open', 'Closed'];
 
@@ -38,6 +39,7 @@ class _CreateEventViewState extends State<CreateEventView> {
   TextEditingController locationController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController maxEntryController = TextEditingController();
+  TextEditingController tagsController = TextEditingController();
   TextEditingController startTimeController = TextEditingController();
   TextEditingController endTimeController = TextEditingController();
   TextEditingController detailsController = TextEditingController();
@@ -186,7 +188,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: eventNameController,
                   validator: (String input) {
                     if (eventNameController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Event name is required.');
+                      Get.snackbar('Warning', 'Event name is required.',colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -201,7 +203,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: locationController,
                   validator: (String input) {
                     if (locationController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Location is required.');
+                      Get.snackbar('Warning', 'Location is required.',colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -233,18 +235,34 @@ class _CreateEventViewState extends State<CreateEventView> {
                 ),
                 const SizedBox(height: 20),
                 buildTextField(
+                  hintText: 'Tags (separate by comma)',
+                  isPassword: false,
+                  textInputType: TextInputType.text,
+                  controller: tagsController,
+                  validator: (String input) {
+                    if (tagsController.text.isEmpty) {
+                      Get.snackbar('Warning', 'One Tag is required.',colorText: Colors.blue);
+                      return '';
+                    }
+                  },
+                  isEvent: true,
+                  icon: 'assets/images/#_icon.png',
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                buildTextField(
                   hintText: 'Max Entries',
                   isPassword: false,
                   textInputType: TextInputType.number,
                   controller: maxEntryController,
                   validator: (String input) {
                     if (maxEntryController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Max Entry is required.');
+                      Get.snackbar('Warning', 'Max Entries is required.',colorText: Colors.blue);
                       return '';
                     }
                   },
-                  isEvent: true,
-                  icon: 'assets/images/#_icon.png',
+                  iconData: Icons.event_seat,
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -314,7 +332,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: priceController,
                   validator: (String input) {
                     if (priceController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Price is required.');
+                      Get.snackbar('Warning', 'Price is required.',colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -334,7 +352,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: detailsController,
                   validator: (input) {
                     if (detailsController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Details is required.');
+                      Get.snackbar('Warning', 'Details is required.',colorText: Colors.blue);
                       return '';
                     }
                     return null;
@@ -407,7 +425,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                     ),
                   ),
                   child: DropdownButton(
-                    value: dropDownValue,
+                    value: inviteDropDownValue,
                     underline: Container(),
                     icon: const Icon(
                       Icons.arrow_drop_down,
@@ -430,7 +448,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                         .toList(),
                     onChanged: (newValue) {
                       setState(() {
-                        dropDownValue = newValue.toString();
+                        inviteDropDownValue = newValue.toString();
                       });
                     },
                   ),
@@ -449,44 +467,74 @@ class _CreateEventViewState extends State<CreateEventView> {
                           if (!formKey.currentState!.validate()) {
                             return;
                           } else if (dateController.text.isEmpty) {
-                            Get.snackbar('Warning', 'Event date is required');
+                            Get.snackbar('Warning', 'Event date is required',colorText: Colors.blue);
                             return;
                           } else if (startTimeController.text.isEmpty) {
-                            Get.snackbar('Warning', 'Start Time is required');
+                            Get.snackbar('Warning', 'Start Time is required',colorText: Colors.blue);
                             return;
                           } else if (endTimeController.text.isEmpty) {
-                            Get.snackbar('Warning', 'End Time is required');
+                            Get.snackbar('Warning', 'End Time is required',colorText: Colors.blue);
                             return;
                           } else if (media.isEmpty) {
                             Get.snackbar(
-                                'Warning', 'Need at least one media file');
+                                'Warning', 'Need at least one media file',colorText: Colors.blue);
                             return;
                           } else {
-                            if(media.isNotEmpty){
-                              for(int i = 0; i < media.length;i++){
-                                if(media[i].isVideo!){
-                                  String thumbnailUrl = await dataController.uploadThumbnailsToFirebase(media[i].thumbnail!);
+                            if (media.isNotEmpty) {
+                              for (int i = 0; i < media.length; i++) {
+                                if (media[i].isVideo!) {
+                                  String thumbnailUrl = await dataController
+                                      .uploadThumbnailsToFirebase(
+                                          media[i].thumbnail!);
 
-                                  String videoUrl = await dataController.uploadImageToFirebase(media[i].video!);
-                                  
-                                  
+                                  String videoUrl = await dataController
+                                      .uploadImageToFirebase(media[i].video!);
+
                                   mediaUrls.add({
-                                    'url' : videoUrl,
-                                    'thumbnailUrl' : thumbnailUrl,
-                                    'isImage' : false,
+                                    'url': videoUrl,
+                                    'thumbnailUrl': thumbnailUrl,
+                                    'isImage': false,
                                   });
-
-                                }
-                                else{
-                                  String imageUrl = await dataController.uploadImageToFirebase(media[i].image!);
+                                } else {
+                                  String imageUrl = await dataController
+                                      .uploadImageToFirebase(media[i].image!);
 
                                   mediaUrls.add({
-                                    'url' : imageUrl,
-                                    'isImage' : true,
+                                    'url': imageUrl,
+                                    'isImage': true,
                                   });
                                 }
                               }
                             }
+
+                            List<String> tags = tagsController.text.split(',');
+
+                            Map<String, dynamic> eventData = {
+                              'event_name': eventNameController.text,
+                              'event_location': locationController.text,
+                              'event_date': dateController.text,
+                              'event_max_entries': maxEntryController.text,
+                              'event_start_time': startTimeController.text,
+                              'event_end_time': endTimeController.text,
+                              'event_price': priceController.text,
+                              'event_details': detailsController.text,
+                              'event_tags': tags,
+                              'event_invite_access': inviteDropDownValue,
+                              'event_joined': [
+                                FirebaseAuth.instance.currentUser!.uid
+                              ],
+                              'event_media': mediaUrls,
+                              'event_creator_uID':
+                                  FirebaseAuth.instance.currentUser!.uid,
+                              'event_inviter': [
+                                FirebaseAuth.instance.currentUser!.uid
+                              ],
+                            };
+
+                            await dataController.createEvent(eventData)
+                            .then((value) {
+                              dataController.isCreatingEvent(false);
+                            });
                           }
                         },
                         shape: RoundedRectangleBorder(
@@ -679,7 +727,7 @@ class _CreateEventViewState extends State<CreateEventView> {
     );
     if (picked != null) {
       final DateFormat formatter = DateFormat('MMM dd, yyyy');
-      dateController.text  = formatter.format(picked);
+      dateController.text = formatter.format(picked);
     }
   }
 

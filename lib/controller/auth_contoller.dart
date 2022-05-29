@@ -3,6 +3,7 @@ import  'dart:io';
 import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -27,7 +28,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error);
+      Get.snackbar('Warning', error,colorText: Colors.blue);
     });
   }
 
@@ -42,7 +43,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error);
+      Get.snackbar('Warning', error,colorText: Colors.blue);
     });
   }
 
@@ -75,7 +76,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error);
+      Get.snackbar('Warning', error,colorText: Colors.blue);
     });
   }
 
@@ -91,7 +92,7 @@ class AuthController extends GetxController {
       await googleSignIn.signIn();
     } catch (e) {
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error);
+      Get.snackbar('Warning', error,colorText: Colors.blue);
     }
   }
 
@@ -102,11 +103,11 @@ class AuthController extends GetxController {
       isLoading(false);
       Get.back();
       Get.snackbar(
-          'Email Sent', 'We have send an Email to reset your password.');
+          'Email Sent', 'We have send an Email to reset your password.',colorText: Colors.blue);
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', 'Error in sending password reset link at $error');
+      Get.snackbar('Warning', 'Error in sending password reset link at $error',colorText: Colors.blue);
     });
   }
 
@@ -130,10 +131,10 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isProfileDataUploading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error);
+      Get.snackbar('Warning', error,colorText: Colors.blue);
     });
 
-    Get.snackbar('Warning', 'Image Uploaded');
+    Get.snackbar('Warning', 'Image Uploaded',colorText: Colors.blue);
 
   return imageUrl;
   }
@@ -160,7 +161,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isProfileDataUploading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error);
+      Get.snackbar('Warning', error,colorText: Colors.blue);
     });
   }
 }

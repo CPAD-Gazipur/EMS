@@ -14,7 +14,7 @@ class LoginSignupScreen extends StatefulWidget {
 }
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
-  bool isSignupScreen = true;
+  bool isSignupScreen = false;
   bool isRememberMe = false;
   String title = 'Signup';
 
@@ -286,13 +286,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               if (input.isEmpty) {
                 Get.snackbar(
                   'Warning',
-                  'Email is required!',
+                  'Email is required!',colorText: Colors.blue
                 );
                 return '';
               } else if (!input.contains('@')) {
                 Get.snackbar(
                   'Warning',
-                  'Email is invalid!',
+                  'Email is invalid!',colorText: Colors.blue
                 );
                 return '';
               }
@@ -308,13 +308,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               if (input.isEmpty) {
                 Get.snackbar(
                   'Warning',
-                  'Password is required!',
+                  'Password is required!',colorText: Colors.blue
                 );
                 return '';
               } else if (input.length < 6) {
                 Get.snackbar(
                   'Warning',
-                  'Password must be 6 digit or more!',
+                  'Password must be 6 digit or more!',colorText: Colors.blue
                 );
                 return '';
               }
@@ -330,13 +330,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               if (input.isEmpty) {
                 Get.snackbar(
                   'Warning',
-                  'Confirm Password is required!',
+                  'Confirm Password is required!',colorText: Colors.blue
                 );
                 return '';
               } else if (input != passwordController.text.trim()) {
                 Get.snackbar(
                   'Warning',
-                  'Password not match try again!',
+                  'Password not match try again!',colorText: Colors.blue
                 );
                 return '';
               }
@@ -391,13 +391,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               if (input.isEmpty) {
                 Get.snackbar(
                   'Warning',
-                  'Email is required!',
+                  'Email is required!',colorText: Colors.blue
                 );
                 return '';
               } else if (!input.contains('@')) {
                 Get.snackbar(
                   'Warning',
-                  'Email is invalid!',
+                  'Email is invalid!',colorText: Colors.blue
                 );
                 return '';
               }
@@ -413,13 +413,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               if (input.isEmpty) {
                 Get.snackbar(
                   'Warning',
-                  'Password is required!',
+                  'Password is required!',colorText: Colors.blue
                 );
                 return '';
               } else if (input.length < 6) {
                 Get.snackbar(
                   'Warning',
-                  'Password must be 6 digit or more!',
+                  'Password must be 6 digit or more!',colorText: Colors.blue
                 );
                 return '';
               }
@@ -474,13 +474,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               if (input.isEmpty) {
                                 Get.snackbar(
                                   'Warning',
-                                  'Email is required!',
+                                  'Email is required!',colorText: Colors.blue
                                 );
                                 return '';
                               } else if (!input.contains('@')) {
                                 Get.snackbar(
                                   'Warning',
-                                  'Email is invalid!',
+                                  'Email is invalid!',colorText: Colors.blue
                                 );
                                 return '';
                               }
