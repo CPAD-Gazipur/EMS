@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       LocalNotificationService.display(event);
     });
     storeNotificationToken();
-
+    FirebaseMessaging.instance.subscribeToTopic('subscription');
   }
 
   @override
