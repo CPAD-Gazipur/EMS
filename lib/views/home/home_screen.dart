@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
+import 'package:ems/service/local_push_notification.dart';
 import 'package:ems/views/chat/chat_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,10 +19,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
 
+  storeNotificationToken() async {
+
+    String? token = await FirebaseMessaging.instance.getToken();
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      'token': token,
+    }, SetOptions(merge: true));
+  }
+
   @override
   initState() {
     super.initState();
-    Get.put(DataController(),permanent: true);
+    Get.put(DataController(), permanent: true);
+    FirebaseMessaging.onMessage.listen((event) {
+      //Received Firebase messages
+      LocalNotificationService.display(event);
+    });
+    storeNotificationToken();
+
   }
 
   @override

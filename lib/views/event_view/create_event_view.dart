@@ -13,7 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../config/app_colors.dart';
-import '../../controller/auth_contoller.dart';
 import '../../model/event_media_model.dart';
 
 class CreateEventView extends StatefulWidget {
@@ -791,7 +790,8 @@ class _CreateEventViewState extends State<CreateEventView> {
     }
 
     setState(() {});
-    Navigator.pop(context);
+    //Navigator.pop(context);
+    Get.back();
   }
 
   getVideoDialog(ImageSource videoSource) async {
@@ -819,7 +819,8 @@ class _CreateEventViewState extends State<CreateEventView> {
 
     setState(() {});
 
-    Navigator.pop(context);
+    //Navigator.pop(context);
+    Get.back();
   }
 
   Future<void> _selectDate(BuildContext context) async {
