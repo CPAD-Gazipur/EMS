@@ -28,7 +28,7 @@ class DataController extends GetxController {
       Get.snackbar('Warning', error,colorText: Colors.blue);
     });
 
-    Get.snackbar('Warning', 'Image Uploaded',colorText: Colors.blue);
+    Get.snackbar('Success', 'Image Uploaded',colorText: Colors.blue);
 
     return imageUrl;
   }
@@ -52,7 +52,7 @@ class DataController extends GetxController {
       Get.snackbar('Warning', error,colorText: Colors.blue);
     });
 
-    Get.snackbar('Warning', 'Thumbnail Uploaded',colorText: Colors.blue);
+    Get.snackbar('Success', 'Thumbnail Uploaded',colorText: Colors.blue);
 
     return imageUrl;
   }

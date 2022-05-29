@@ -119,7 +119,7 @@ class AuthController extends GetxController {
     String imagePath = path.basename(auth.currentUser!.uid);
 
     var reference =
-        FirebaseStorage.instance.ref().child('profileImages/$imagePath');
+        FirebaseStorage.instance.ref().child('profileImages/$imagePath.jpg');
 
     UploadTask uploadTask = reference.putFile(image);
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
@@ -134,7 +134,7 @@ class AuthController extends GetxController {
       Get.snackbar('Warning', error,colorText: Colors.blue);
     });
 
-    Get.snackbar('Warning', 'Image Uploaded',colorText: Colors.blue);
+    Get.snackbar('Success', 'Image Uploaded',colorText: Colors.blue);
 
   return imageUrl;
   }

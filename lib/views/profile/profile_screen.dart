@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: nameController,
                   validator: (String input) {
                     if (nameController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Name is required.');
+                      Get.snackbar('Warning', 'Name is required.',colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -135,11 +135,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: phoneController,
                   validator: (String input) {
                     if (phoneController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Phone number is required.');
+                      Get.snackbar('Warning', 'Phone number is required.',colorText: Colors.blue);
                       return '';
                     } else if (phoneController.text.length < 11 ||
                         phoneController.text.length > 11) {
-                      Get.snackbar('Warning', 'Enter 11 digit phone number.');
+                      Get.snackbar('Warning', 'Enter 11 digit phone number.',colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -276,12 +276,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 return;
                               } else if (dateRangeController.text.isEmpty) {
                                 Get.snackbar(
-                                    'Warning', 'Birth Date is required.');
+                                    'Warning', 'Birth Date is required.',colorText: Colors.blue);
                                 return;
                               } else if (profileImage == null) {
                                 Get.snackbar(
                                   'Warning',
-                                  "Image is required.",
+                                  "Image is required.",colorText: Colors.blue
                                 );
                                 return;
                               } else {
@@ -338,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      initialDatePickerMode: DatePickerMode.day,
+      initialDatePickerMode: DatePickerMode.year,
       firstDate: DateTime(1950),
       lastDate: DateTime(2101),
     );
@@ -358,29 +358,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: TextStyle(color: Colors.grey),
           ),
           content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              InkWell(
+              GestureDetector(
                 child: Container(
                   height: 75,
                   padding: const EdgeInsets.all(5),
-                  child: Expanded(
-                    child: Column(
-                      children: const [
-                        Icon(
-                          Icons.camera_alt_outlined,
-                          size: 40,
-                          color: AppColors.textColor2,
+                  child: Column(
+                    children: const [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        color: AppColors.textColor2,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Camera',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
                         ),
-                        Text(
-                          'Camera',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 onTap: () async {
@@ -394,27 +394,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
                 },
               ),
-              InkWell(
+              GestureDetector(
                 child: Container(
                   height: 75,
                   padding: const EdgeInsets.all(5),
-                  child: Expanded(
-                    child: Column(
-                      children: const [
-                        Icon(
-                          Icons.photo_camera_back,
-                          size: 40,
-                          color: AppColors.textColor2,
+                  child: Column(
+                    children: const [
+                      Icon(
+                        Icons.photo_camera_back,
+                        color: AppColors.textColor2,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Gallery',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
                         ),
-                        Text(
-                          'Gallery',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 onTap: () async {

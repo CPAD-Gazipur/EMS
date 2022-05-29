@@ -230,6 +230,41 @@ class _CreateEventViewState extends State<CreateEventView> {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.textColor1,
+                      ),
+                    ),
+                    focusedBorder:  const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.textColorBlue,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12),
+                      ),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.textColor1,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12),
+                      ),
+                    ),
+                    errorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.redAccent,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12),
+                      ),
+                    ),
+                    focusedErrorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.redAccent,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -245,8 +280,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                       return '';
                     }
                   },
-                  isEvent: true,
-                  icon: 'assets/images/#_icon.png',
+                  isEvent: false,
+                  iconData: Icons.tag
                 ),
                 const SizedBox(
                   height: 10,
@@ -288,6 +323,41 @@ class _CreateEventViewState extends State<CreateEventView> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.textColor1,
+                            ),
+                          ),
+                          focusedBorder:  const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.textColorBlue,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.textColor1,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          errorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          focusedErrorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
                           ),
                         ),
                       ),
@@ -316,6 +386,41 @@ class _CreateEventViewState extends State<CreateEventView> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.textColor1,
+                            ),
+                          ),
+                          focusedBorder:  const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.textColorBlue,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.textColor1,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          errorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          focusedErrorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
                           ),
                         ),
                       ),
@@ -745,7 +850,7 @@ class _CreateEventViewState extends State<CreateEventView> {
       } else {
         am = 'PM';
       }
-      controller.text = '${time.hourOfPeriod} : ${time.hour} $am';
+      controller.text = '${time.hourOfPeriod} : ${time.minute} $am';
     }
   }
 }

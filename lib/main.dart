@@ -1,4 +1,6 @@
+import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/on_boarding/on_boarding_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: const OnBoardingScreen(),
+      home: FirebaseAuth.instance.currentUser?.uid == null ? const OnBoardingScreen() : const HomeScreen(),
     );
   }
 }
