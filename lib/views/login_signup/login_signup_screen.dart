@@ -18,6 +18,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   bool isRememberMe = false;
   String title = 'Signup';
 
+  bool isPassword = true;
+  bool isLoginPassword = true;
+  bool isConfirmPassword = true;
+
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController emailLoginController = TextEditingController();
@@ -298,49 +302,167 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               }
             },
           ),
-          buildTextField(
-            iconData: Icons.lock_outline,
-            hintText: 'Password',
-            isPassword: true,
-            textInputType: TextInputType.text,
-            controller: passwordController,
-            validator: (String input) {
-              if (input.isEmpty) {
-                Get.snackbar(
-                  'Warning',
-                  'Password is required!',colorText: Colors.blue
-                );
-                return '';
-              } else if (input.length < 6) {
-                Get.snackbar(
-                  'Warning',
-                  'Password must be 6 digit or more!',colorText: Colors.blue
-                );
-                return '';
-              }
-            },
+          Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: TextFormField(
+                controller: passwordController,
+                validator: (input) {
+                  if (input!.isEmpty) {
+                    Get.snackbar(
+                        'Warning',
+                        'Password is required!',colorText: Colors.blue
+                    );
+                    return '';
+                  } else if (input.length < 6) {
+                    Get.snackbar(
+                        'Warning',
+                        'Password must be 6 digit or more!',colorText: Colors.blue
+                    );
+                    return '';
+                  }
+                  return null;
+                },
+                obscureText: isPassword,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
+                    Icons.lock_outline,
+                    color: AppColors.iconColor,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isPassword ? Icons.visibility_off : Icons.visibility ,
+                      color: AppColors.iconColor,
+                    ),
+                    onPressed: () {
+
+                      setState((){
+                        isPassword = !isPassword;
+                      });
+
+                    },
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.textColor1,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.textColorBlue,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.redAccent,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  focusedErrorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.redAccent,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.all(15),
+                  hintText: 'Password',
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textColor1,
+                  ),
+                ),
+              ),
           ),
-          buildTextField(
-            iconData: Icons.lock_outline,
-            hintText: 'Confirm Password',
-            isPassword: true,
-            textInputType: TextInputType.text,
-            controller: confirmPasswordController,
-            validator: (String input) {
-              if (input.isEmpty) {
-                Get.snackbar(
-                  'Warning',
-                  'Confirm Password is required!',colorText: Colors.blue
-                );
-                return '';
-              } else if (input != passwordController.text.trim()) {
-                Get.snackbar(
-                  'Warning',
-                  'Password not match try again!',colorText: Colors.blue
-                );
-                return '';
-              }
-            },
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: TextFormField(
+              controller: confirmPasswordController,
+              validator: (input) {
+                if (input!.isEmpty) {
+                  Get.snackbar(
+                      'Warning',
+                      'Confirm Password is required!',colorText: Colors.blue
+                  );
+                  return '';
+                } else if (input != passwordController.text.trim()) {
+                  Get.snackbar(
+                      'Warning',
+                      'Password not match try again!',colorText: Colors.blue
+                  );
+                  return '';
+                }
+                return null;
+              },
+              obscureText: isConfirmPassword,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.iconColor,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isConfirmPassword ? Icons.visibility_off : Icons.visibility ,
+                    color: AppColors.iconColor,
+                  ),
+                  onPressed: () {
+
+                    setState((){
+                      isConfirmPassword = !isConfirmPassword;
+                    });
+
+                  },
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.textColor1,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.textColorBlue,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.redAccent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                focusedErrorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.redAccent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(15),
+                hintText: 'Confirm Password',
+                hintStyle: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textColor1,
+                ),
+              ),
+            ),
           ),
           const SizedBox(
             height: 10,
@@ -403,27 +525,86 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               }
             },
           ),
-          buildTextField(
-            iconData: Icons.lock_outline,
-            hintText: '***********',
-            isPassword: true,
-            textInputType: TextInputType.text,
-            controller: passwordLoginController,
-            validator: (String input) {
-              if (input.isEmpty) {
-                Get.snackbar(
-                  'Warning',
-                  'Password is required!',colorText: Colors.blue
-                );
-                return '';
-              } else if (input.length < 6) {
-                Get.snackbar(
-                  'Warning',
-                  'Password must be 6 digit or more!',colorText: Colors.blue
-                );
-                return '';
-              }
-            },
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: TextFormField(
+              controller: passwordLoginController,
+              validator: (input) {
+                if (input!.isEmpty) {
+                  Get.snackbar(
+                      'Warning',
+                      'Password is required!',colorText: Colors.blue
+                  );
+                  return '';
+                } else if (input.length < 6) {
+                  Get.snackbar(
+                      'Warning',
+                      'Password must be 6 digit or more!',colorText: Colors.blue
+                  );
+                  return '';
+                }
+                return null;
+              },
+              obscureText: isLoginPassword,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.iconColor,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isLoginPassword ? Icons.visibility_off : Icons.visibility ,
+                    color: AppColors.iconColor,
+                  ),
+                  onPressed: () {
+
+                    setState((){
+                      isLoginPassword = !isLoginPassword;
+                    });
+
+                  },
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.textColor1,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.textColorBlue,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.redAccent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                focusedErrorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.redAccent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(15),
+                hintText: '***********',
+                hintStyle: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textColor1,
+                ),
+              ),
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

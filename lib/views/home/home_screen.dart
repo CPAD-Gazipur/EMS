@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
+
   FirebaseDynamicLinks firebaseDynamicLinks = FirebaseDynamicLinks.instance;
 
   storeNotificationToken() async {
@@ -43,22 +44,27 @@ class _HomeScreenState extends State<HomeScreen> {
       print('onLink error');
       print(error.message);
     });
+
+    final PendingDynamicLinkData? pendingDynamicLinkData =
+    await FirebaseDynamicLinks.instance.getInitialLink();
+
+    final Uri pendingUri = pendingDynamicLinkData!.link;
+
+    handleDeepLink(pendingUri);
+
   }
 
   handleDeepLink(Uri deepLink) {
-
     List<String> separatedLink = [];
 
     separatedLink.addAll(deepLink.path.split('/'));
 
-    if(separatedLink[1] == 'book'){
+    if (separatedLink[1] == 'book') {
       onItemTap(2);
     }
 
     print('Separated Links are: ${separatedLink[1]} & Main Link: $deepLink');
   }
-
-
 
   @override
   initState() {

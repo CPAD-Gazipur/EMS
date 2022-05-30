@@ -97,6 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
   createDynamicLink(String docID) async {
+
     String url = 'https://www.rokomari.com';
 
     final DynamicLinkParameters parameters = DynamicLinkParameters(

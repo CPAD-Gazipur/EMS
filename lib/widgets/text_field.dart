@@ -9,8 +9,7 @@ Widget buildTextField({
   required TextInputType textInputType,
   required TextEditingController controller,
   required Function validator,
-  bool isEvent = false,
-  String? icon,
+  bool isVisible = false,
 }) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8),
@@ -20,15 +19,21 @@ Widget buildTextField({
       obscureText: isPassword,
       keyboardType: textInputType,
       decoration: InputDecoration(
-        prefixIcon: isEvent
-            ? Image.asset(
-                icon!,
-                cacheHeight: 18,
+        prefixIcon: Icon(
+          iconData,
+          color: AppColors.iconColor,
+        ),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  isVisible ? Icons.visibility : Icons.visibility_off,
+                  color: AppColors.iconColor,
+                ),
+                onPressed: () {
+                  isVisible = true;
+                },
               )
-            : Icon(
-                iconData,
-                color: AppColors.iconColor,
-              ),
+            : null,
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(
             color: AppColors.textColor1,

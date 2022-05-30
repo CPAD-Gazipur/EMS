@@ -278,7 +278,6 @@ class _CreateEventViewState extends State<CreateEventView> {
                       return '';
                     }
                   },
-                  isEvent: false,
                   iconData: Icons.tag
                 ),
                 const SizedBox(

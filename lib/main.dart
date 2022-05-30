@@ -10,13 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    /*options: const FirebaseOptions(
-        apiKey: 'apiKey',
-        appId: 'appId',
-        messagingSenderId: 'messagingSenderId',
-        projectId: 'projectId'),*/
-  );
+  await Firebase.initializeApp();
   LocalNotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessages);
   runApp(const MyApp());
