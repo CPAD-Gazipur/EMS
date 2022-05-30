@@ -191,8 +191,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                       return '';
                     }
                   },
-                  isEvent: true,
-                  icon: 'assets/images/menu_icon_4_dot.png',
+                  iconData: Icons.event,
                 ),
                 const SizedBox(height: 10),
                 buildTextField(
@@ -375,7 +374,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.all(15),
                           prefixIcon: const Icon(
-                            Icons.timer,
+                            Icons.access_time,
                             color: AppColors.iconColor,
                           ),
                           hintText: 'End Time',

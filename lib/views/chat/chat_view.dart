@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:share_plus/share_plus.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  FirebaseDynamicLinks firebaseDynamicLinks = FirebaseDynamicLinks.instance;
 
   @override
   initState() {
@@ -80,16 +82,41 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           'priority': 'high',
           'data': data,
-          'to': '/topics/subscription/',
+          'to': '/topics/subscription',
         }),
       );
 
       if (response.statusCode == 200) {
-        Get.snackbar('Success', 'Group Notification Send', colorText: Colors.blue);
+        Get.snackbar('Success', 'Group Notification Send',
+            colorText: Colors.blue);
       }
     } catch (e) {
       Get.snackbar('Warning', 'Error: $e', colorText: Colors.blue);
     }
+  }
+
+
+  createDynamicLink(String docID) async {
+    String url = 'https://www.rokomari.com';
+
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://emsapp.page.link',
+      link: Uri.parse('$url/$docID'),
+      androidParameters: const AndroidParameters(
+        packageName: 'com.alaminkarno.ems.ems',
+        minimumVersion: 0,
+      ),
+      iosParameters: const IOSParameters(
+        bundleId: 'com.alaminkarno.ems.ems',
+        minimumVersion: '0',
+      ),
+    );
+
+    final ShortDynamicLink shortLink =
+        await firebaseDynamicLinks.buildShortLink(parameters);
+    Uri shortUri = shortLink.shortUrl;
+    String shortUrl = shortUri.toString();
+    await Share.share(shortUrl);
   }
 
   @override
@@ -99,9 +126,9 @@ class _ChatScreenState extends State<ChatScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed: () {
-              sendNotification('Check Notification',
-                  'e7LuMmSfQVGscdcS6dtnUV:APA91bGxQk-eeOvu4Z_QjVGQrfI2wOX9klWLUpHX4dWQgl6MviKzBtkBeyCIJz-Jq0duST0Y3n99TtMrvhqNIpVsWUkTLrYNqERmjxbnlzFLSR2E6aSmaz9bYqU536GYLkopZYQZLKQ8');
+            onPressed: () async {
+              String? token = await FirebaseMessaging.instance.getToken();
+              sendNotification('Check Notification', token!);
             },
             child: const Text('Send Notification'),
           ),
@@ -111,7 +138,16 @@ class _ChatScreenState extends State<ChatScreen> {
           ElevatedButton(
               onPressed: () {
                 sendNotificationToGroup('Group Notification');
-              }, child: const Text('Send Group Notification')),
+              },
+              child: const Text('Send Group Notification')),
+          const SizedBox(
+            height: 10,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                createDynamicLink('book');
+              },
+              child: const Text('Create Dynamic Link')),
         ],
       ),
     );
