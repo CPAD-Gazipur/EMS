@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ems/config/app_credentials.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +35,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       http.Response response = await http.post(
-        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        Uri.parse(AppCredential.fcmNotificationUrl),
         headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization':
-              'key=AAAAYOkWYfI:APA91bEE0VZJcZah7ZJud6Kqh_CioIImWrx240gZSn_o_1NVUjMEWgltBm1mz-P55mYopqyGz9f9H9sK8H_RN3Vdxgn3H7NpnCj-5RgsDw-tiKIz3IiaJTZJhzlKwMe99sjA7YfUrHQb'
+          'Content-Type': AppCredential.headerContentType,
+          'Authorization': AppCredential.fcmAuthorizationKey,
         },
         body: jsonEncode(<String, dynamic>{
           'notification': <String, dynamic>{
@@ -69,11 +69,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       http.Response response = await http.post(
-        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        Uri.parse(AppCredential.fcmNotificationUrl),
         headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization':
-              'key=AAAAYOkWYfI:APA91bEE0VZJcZah7ZJud6Kqh_CioIImWrx240gZSn_o_1NVUjMEWgltBm1mz-P55mYopqyGz9f9H9sK8H_RN3Vdxgn3H7NpnCj-5RgsDw-tiKIz3IiaJTZJhzlKwMe99sjA7YfUrHQb'
+          'Content-Type': AppCredential.headerContentType,
+          'Authorization': AppCredential.fcmAuthorizationKey,
         },
         body: jsonEncode(<String, dynamic>{
           'notification': <String, dynamic>{
@@ -95,9 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-
   createDynamicLink(String docID) async {
-
     String url = 'https://www.rokomari.com';
 
     final DynamicLinkParameters parameters = DynamicLinkParameters(
