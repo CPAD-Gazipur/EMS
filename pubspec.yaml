@@ -51,6 +51,9 @@ dependencies:
   http: ^0.13.4
   firebase_dynamic_links: ^4.2.5
   share_plus: ^4.0.4
+  rxdart: ^0.27.4
+  flutter_native_timezone: ^2.0.0
+
 
 dev_dependencies:
   flutter_test:

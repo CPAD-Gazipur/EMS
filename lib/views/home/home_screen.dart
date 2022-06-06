@@ -2,13 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/service/local_push_notification.dart';
 import 'package:ems/views/chat/chat_view.dart';
+import 'package:ems/views/on_boarding/on_boarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
-
 import '../event_view/create_event_view.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,23 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   initializeDynamicLink() async {
-
     firebaseDynamicLinks.onLink.listen((dynamicLinkData) {
       final Uri deepLink = dynamicLinkData.link;
-
       handleDeepLink(deepLink);
     }).onError((error) {
-      print('onLink error');
-      print(error.message);
+      debugPrint('onLink error');
+      debugPrint(error.message);
     });
 
     final PendingDynamicLinkData? pendingDynamicLinkData =
-    await FirebaseDynamicLinks.instance.getInitialLink();
+        await FirebaseDynamicLinks.instance.getInitialLink();
 
     final Uri pendingUri = pendingDynamicLinkData!.link;
 
     handleDeepLink(pendingUri);
-
   }
 
   handleDeepLink(Uri deepLink) {
@@ -63,13 +59,25 @@ class _HomeScreenState extends State<HomeScreen> {
       onItemTap(2);
     }
 
-    print('Separated Links are: ${separatedLink[1]} & Main Link: $deepLink');
+    debugPrint('Separated Links are: ${separatedLink[1]} & Main Link: $deepLink');
+  }
+
+  void listenNotifications() {
+    LocalNotificationService.onNotifications.stream.listen((event) {
+      /*Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const OnBoardingScreen(),
+        ),
+      );*/
+      debugPrint(event);
+    });
   }
 
   @override
   initState() {
     super.initState();
     Get.put(DataController(), permanent: true);
+    listenNotifications();
     FirebaseMessaging.onMessage.listen((event) {
       //Received Firebase messages
       LocalNotificationService.display(event);

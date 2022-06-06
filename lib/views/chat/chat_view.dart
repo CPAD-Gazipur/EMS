@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ems/config/app_credentials.dart';
+import 'package:ems/service/local_push_notification.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   initState() {
     super.initState();
-
+    LocalNotificationService.initialize(isSchedule: true);
     FirebaseMessaging.instance.subscribeToTopic('subscription');
   }
 
@@ -94,6 +95,42 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  /*sendScheduleNotification(String title,DateTime dateTime) async {
+
+    final data = {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'id': '1',
+      'status': 'done',
+      'message': title,
+    };
+
+    try {
+      http.Response response = await http.post(
+        Uri.parse(AppCredential.fcmNotificationUrl),
+        headers: <String, String>{
+          'Content-Type': AppCredential.headerContentType,
+          'Authorization': AppCredential.fcmAuthorizationKey,
+        },
+        body: jsonEncode(<String, dynamic>{
+          'notification': <String, dynamic>{
+            'title': title,
+            'body': 'Group Notification Send',
+          },
+          'priority': 'high',
+          'data': data,
+          'to': '/topics/subscription',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar('Success', 'Group Notification Send',
+            colorText: Colors.blue);
+      }
+    } catch (e) {
+      Get.snackbar('Warning', 'Error: $e', colorText: Colors.blue);
+    }
+  }*/
+
   createDynamicLink(String docID) async {
     String url = 'https://www.rokomari.com';
 
@@ -130,6 +167,20 @@ class _ChatScreenState extends State<ChatScreen> {
             },
             child: const Text('Send Notification'),
           ),
+          const SizedBox(
+            height: 10,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                LocalNotificationService.displayScheduleNotification(
+                  title: 'Hello',
+                  body: 'This is schedule Notification',
+                  dateTime: DateTime.now().add(const Duration(seconds: 12)),
+                );
+
+                Get.snackbar('Success', 'Schedule Notification in 12 Sec');
+              },
+              child: const Text('Send Schedule Notification')),
           const SizedBox(
             height: 10,
           ),
