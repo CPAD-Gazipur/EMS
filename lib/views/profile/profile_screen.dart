@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:flutter/material.dart';
@@ -171,8 +172,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     : CircleAvatar(
                                         radius: 56,
                                         backgroundColor: Colors.white,
-                                        backgroundImage:
-                                            NetworkImage(profileImage),
+                                        child: CachedNetworkImage(
+                                          imageUrl: profileImage,
+                                          fit: BoxFit.contain,
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover),
+                                            ),
+                                          ),
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                            child: CircularProgressIndicator
+                                                .adaptive(),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
+                                        ),
                                       ),
                               ),
                             ],
