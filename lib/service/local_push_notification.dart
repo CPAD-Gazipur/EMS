@@ -56,6 +56,9 @@ class LocalNotificationService {
       Random random = Random();
       int id = random.nextInt(1000);
 
+      RemoteNotification? remoteNotification = message.notification;
+      AndroidNotification? androidNotification = message.notification?.android;
+
 
       await _flutterLocalNotificationsPlugin.show(
         id,

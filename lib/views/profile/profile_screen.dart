@@ -1,13 +1,7 @@
-import 'dart:io';
-
-import 'package:ems/controller/auth_contoller.dart';
-import 'package:ems/widgets/text_field.dart';
+import 'package:ems/config/app_colors.dart';
+import 'package:ems/controller/data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-
-import '../../config/app_colors.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -17,422 +11,389 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isMale = true;
-  File? profileImage;
-
-  late AuthController authController;
+  bool isNotEditAble = true;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController dateRangeController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  DataController? dataController;
+  int followers = 0, following = 0;
+  String profileImage = '';
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    authController = Get.put(AuthController());
+    dataController = Get.find<DataController>();
+
+    nameController.text = dataController!.userDocumentSnapshot!.get('name');
+
+    try {
+      profileImage = dataController!.userDocumentSnapshot!.get('image');
+    } catch (e) {
+      profileImage = '';
+      debugPrint('ProfileImageError: $e');
+    }
+
+    try {
+      locationController.text =
+          dataController!.userDocumentSnapshot!.get('location');
+    } catch (e) {
+      locationController.text = '';
+      debugPrint('LocationError: $e');
+    }
+
+    try {
+      descriptionController.text =
+          dataController!.userDocumentSnapshot!.get('description');
+    } catch (e) {
+      descriptionController.text = '';
+      debugPrint('DescriptionError: $e');
+    }
+
+    try {
+      followers = dataController!.userDocumentSnapshot!.get('followers').length;
+    } catch (e) {
+      followers = 0;
+      debugPrint('FollowersError: $e');
+    }
+
+    try {
+      following = dataController!.userDocumentSnapshot!.get('following').length;
+    } catch (e) {
+      following = 0;
+      debugPrint('FollowingError: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Profile Info',
-          style: TextStyle(
-            color: Colors.grey,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: Get.width * 0.05,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  width: 100,
+                  margin: EdgeInsets.only(
+                    left: Get.width * 0.75,
+                    top: 20,
+                    right: 20,
+                  ),
+                  alignment: Alignment.topRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                          onTap: () {},
+                          child: const Icon(
+                            Icons.sms_rounded,
+                            color: Colors.grey,
+                            size: 26,
+                          )),
+                      InkWell(
+                          onTap: () {},
+                          child: const Icon(
+                            Icons.menu,
+                            color: Colors.grey,
+                            size: 28,
+                          )),
+                    ],
+                  ),
                 ),
-                InkWell(
-                  onTap: () {
-                    imagePickDialog();
-                  },
-                  child: Container(
-                    width: 120,
-                    margin: const EdgeInsets.all(5),
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(70),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xff7DDCFB),
-                          Color(0xffBC67F2),
-                          Color(0xffACF6AF),
-                          Color(0xffF95549),
-                        ],
+              ),
+              Align(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 90),
+                  width: Get.width,
+                  height: isNotEditAble ? 240 : 320,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.15),
+                        spreadRadius: 2,
+                        blurRadius: 3,
+                        offset: const Offset(0, 0),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
+                    ],
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          margin: const EdgeInsets.only(top: 35),
                           padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(70),
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(70),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xff7DDCFB),
+                                  Color(0xffBC67F2),
+                                  Color(0xffACF6AF),
+                                  Color(0xffF95549),
+                                ],
+                              )),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(70),
+                                ),
+                                child: profileImage.isEmpty
+                                    ? const CircleAvatar(
+                                        radius: 56,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/event.jpg'),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 56,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage:
+                                            NetworkImage(profileImage),
+                                      ),
+                              ),
+                            ],
                           ),
-                          child: profileImage == null
-                              ? const CircleAvatar(
-                                  radius: 56,
-                                  backgroundColor: Colors.white,
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.blue,
-                                    size: 50,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      isNotEditAble
+                          ? Text(
+                              nameController.text,
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          : AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              width: Get.width * 0.6,
+                              child: TextFormField(
+                                controller: nameController,
+                                textAlign: TextAlign.center,
+                                validator: (input) {
+                                  if (nameController.text.isEmpty) {
+                                    Get.snackbar('Warning', 'Name is required.',
+                                        colorText: Colors.blue);
+                                    return '';
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  hintText: 'Your name',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
                                   ),
-                                )
-                              : CircleAvatar(
-                                  radius: 56,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: FileImage(
-                                    profileImage!,
+                                  contentPadding: EdgeInsets.all(2),
+                                ),
+                              ),
+                            ),
+                      isNotEditAble
+                          ? Text(
+                              locationController.text == ''
+                                  ? 'Add your location'
+                                  : locationController.text,
+                              style: const TextStyle(
+                                color: Color(0xFF918F8F),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          : AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              width: Get.width * 0.6,
+                              child: TextField(
+                                controller: locationController,
+                                textAlign: TextAlign.center,
+                                decoration: const InputDecoration(
+                                  hintText: 'Location',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                  contentPadding: EdgeInsets.all(2),
+                                ),
+                              ),
+                            ),
+                      isNotEditAble
+                          ? const SizedBox(height: 15)
+                          : const SizedBox(height: 10),
+                      isNotEditAble
+                          ? Text(
+                              descriptionController.text == ''
+                                  ? 'Add your description'
+                                  : descriptionController.text,
+                              style: const TextStyle(
+                                letterSpacing: -0.3,
+                                color: Color(0xFF918F8F),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            )
+                          : AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              width: Get.width * 0.6,
+                              child: TextField(
+                                controller: descriptionController,
+                                textAlign: TextAlign.center,
+                                decoration: const InputDecoration(
+                                  hintText: 'Description',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                  contentPadding: EdgeInsets.all(2),
+                                ),
+                              ),
+                            ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  '$followers',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    letterSpacing: -0.3,
                                   ),
                                 ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: Get.width * 0.08,
-                ),
-                buildTextField(
-                  iconData: Icons.account_circle_outlined,
-                  hintText: 'Your name',
-                  isPassword: false,
-                  textInputType: TextInputType.text,
-                  controller: nameController,
-                  validator: (String input) {
-                    if (nameController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Name is required.',colorText: Colors.blue);
-                      return '';
-                    }
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                buildTextField(
-                  iconData: Icons.phone,
-                  hintText: 'Your phone number',
-                  isPassword: false,
-                  textInputType: TextInputType.phone,
-                  controller: phoneController,
-                  validator: (String input) {
-                    if (phoneController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Phone number is required.',colorText: Colors.blue);
-                      return '';
-                    } else if (phoneController.text.length < 11 ||
-                        phoneController.text.length > 11) {
-                      Get.snackbar('Warning', 'Enter 11 digit phone number.',colorText: Colors.blue);
-                      return '';
-                    }
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: dateRangeController,
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-
-                    _selectDate(context);
-                  },
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(15),
-                    prefixIcon: const Icon(
-                      Icons.date_range_outlined,
-                      size: 20,
-                      color: AppColors.iconColor,
-                    ),
-                    hintText: 'Date Of Birth',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textColor1,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isMale = true;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 30,
-                            width: 30,
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.textColor1,
-                                width: 1,
+                                const Text(
+                                  'Followers',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 2,
+                              height: 35,
+                              color: const Color(0xFF91BF8F).withOpacity(0.5),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  '$following',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                                const Text(
+                                  'Following',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            MaterialButton(
+                              onPressed: () {},
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              borderRadius: BorderRadius.circular(15),
-                              color: isMale ? AppColors.textColor2 : null,
-                            ),
-                            child: Icon(
-                              Icons.account_circle_outlined,
-                              color:
-                                  isMale ? Colors.white : AppColors.iconColor,
-                            ),
-                          ),
-                          Text(
-                            'Male',
-                            style: TextStyle(
-                              color: AppColors.textColor1,
-                              fontWeight:
-                                  isMale ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isMale = false;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 30,
-                            width: 30,
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.textColor1,
-                                width: 1,
+                              color: AppColors.activeColor,
+                              child: const Text(
+                                'Follow',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.3),
                               ),
-                              borderRadius: BorderRadius.circular(15),
-                              color: isMale ? null : AppColors.textColor2,
-                            ),
-                            child: Icon(
-                              Icons.account_circle_outlined,
-                              color:
-                                  isMale ? AppColors.iconColor : Colors.white,
-                            ),
-                          ),
-                          Text(
-                            'Female',
-                            style: TextStyle(
-                              color: AppColors.textColor1,
-                              fontWeight:
-                                  isMale ? FontWeight.normal : FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Obx(
-                  () => authController.isProfileDataUploading.value
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Container(
-                          height: 50,
-                          margin: EdgeInsets.only(top: Get.height * 0.05),
-                          width: Get.width,
-                          child: ElevatedButton(
-                            child: const Text(
-                              'Save',
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            onPressed: () async {
-                              if (!formKey.currentState!.validate()) {
-                                return;
-                              } else if (dateRangeController.text.isEmpty) {
-                                Get.snackbar(
-                                    'Warning', 'Birth Date is required.',colorText: Colors.blue);
-                                return;
-                              } else if (profileImage == null) {
-                                Get.snackbar(
-                                  'Warning',
-                                  "Image is required.",colorText: Colors.blue
-                                );
-                                return;
-                              } else {
-                                String imageUrl = await authController
-                                    .uploadImageToFirebaseStorage(
-                                        profileImage!);
-
-                                authController.uploadProfileDateToFirebase(
-                                  imageUrl,
-                                  nameController.text.trim(),
-                                  phoneController.text.trim(),
-                                  dateRangeController.text.trim(),
-                                  isMale ? 'Male' : 'Female',
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                ),
-                SizedBox(
-                  height: Get.height * 0.03,
-                ),
-                SizedBox(
-                  width: Get.width * 0.8,
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'By signing up, you agree our ',
-                          style:
-                              TextStyle(color: Color(0xff262628), fontSize: 12),
-                        ),
-                        TextSpan(
-                          text: 'terms, Data policy and cookies policy',
-                          style: TextStyle(
-                              color: Color(0xff262628),
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      initialDatePickerMode: DatePickerMode.year,
-      firstDate: DateTime(1950),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      final DateFormat formatter = DateFormat('MMM dd, yyyy');
-      dateRangeController.text  = formatter.format(picked);
-    }
-  }
-
-  imagePickDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            'Choose Image Source:',
-            style: TextStyle(color: Colors.grey),
-          ),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              GestureDetector(
-                child: Container(
-                  height: 75,
-                  padding: const EdgeInsets.all(5),
-                  child: Column(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt_outlined,
-                        color: AppColors.textColor2,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Camera',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                            )
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-                onTap: () async {
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.camera);
-                  if (image != null) {
-                    profileImage = File(image.path);
-                    setState(() {});
-                    Get.back();
-                  }
-                },
               ),
-              GestureDetector(
+              Align(
+                alignment: Alignment.topRight,
                 child: Container(
-                  height: 75,
-                  padding: const EdgeInsets.all(5),
-                  child: Column(
-                    children: const [
-                      Icon(
-                        Icons.photo_camera_back,
-                        color: AppColors.textColor2,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Gallery',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                  margin: const EdgeInsets.only(top: 105, right: 35),
+                  child: InkWell(
+                    onTap: () {
+                      if (!isNotEditAble && formKey.currentState!.validate()) {
+                        dataController!.updateUserProfileDataInFireStore(
+                          nameController.text,
+                          locationController.text,
+                          descriptionController.text,
+                        );
+
+                        setState(() {
+                          isNotEditAble = true;
+                        });
+                      } else {
+                        setState(() {
+                          isNotEditAble = false;
+                        });
+                      }
+                    },
+                    child: isNotEditAble
+                        ? const Icon(
+                            Icons.edit,
+                            color: Colors.grey,
+                          )
+                        : const Icon(
+                            Icons.check,
+                            color: Colors.black87,
+                          ),
                   ),
                 ),
-                onTap: () async {
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? image = await picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
-                  if (image != null) {
-                    profileImage = File(image.path);
-                    setState(() {});
-                    Get.back();
-                  }
-                },
               ),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

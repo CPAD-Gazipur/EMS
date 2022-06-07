@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/service/local_push_notification.dart';
 import 'package:ems/views/chat/chat_view.dart';
-import 'package:ems/views/on_boarding/on_boarding_screen.dart';
+import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -182,8 +182,6 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
     const CreateEventView(),
     const ChatScreen(),
-    const Center(
-      child: Text('Profile Under-Development'),
-    ),
+    const ProfileScreen(),
   ];
 }

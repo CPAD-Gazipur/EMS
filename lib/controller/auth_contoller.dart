@@ -1,7 +1,7 @@
 import  'dart:io';
 
 import 'package:ems/views/home/home_screen.dart';
-import 'package:ems/views/profile/profile_screen.dart';
+import 'package:ems/views/profile/create_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,7 +40,7 @@ class AuthController extends GetxController {
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
       isLoading(false);
-      Get.to(() => const ProfileScreen());
+      Get.to(() => const CreateProfile());
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
@@ -68,7 +68,7 @@ class AuthController extends GetxController {
     await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       isLoading(false);
       if(isSignupScreen){
-        Get.to(() => const ProfileScreen());
+        Get.to(() => const CreateProfile());
       }
       else{
         Get.offAll(()=> const HomeScreen());
