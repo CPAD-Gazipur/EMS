@@ -43,7 +43,7 @@ class LocalNotificationService {
   static NotificationDetails notificationDetails = const NotificationDetails(
     android: AndroidNotificationDetails(
       'channel',
-      'my channel',
+      'mychanel',
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
@@ -56,9 +56,8 @@ class LocalNotificationService {
       Random random = Random();
       int id = random.nextInt(1000);
 
-      RemoteNotification? remoteNotification = message.notification;
-      AndroidNotification? androidNotification = message.notification?.android;
-
+      /*RemoteNotification? remoteNotification = message.notification;
+      AndroidNotification? androidNotification = message.notification?.android;*/
 
       await _flutterLocalNotificationsPlugin.show(
         id,

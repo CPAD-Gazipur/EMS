@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alaminkarno.ems.ems">
    <application
-        android:label="ems"
+        android:label="EMS"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
