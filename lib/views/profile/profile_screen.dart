@@ -29,7 +29,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     dataController = Get.find<DataController>();
 
-    nameController.text = dataController!.userDocumentSnapshot!.get('name');
+
+
+    try {
+      nameController.text = dataController!.userDocumentSnapshot!.get('name');
+    } catch (e) {
+      nameController.text = '';
+      debugPrint('NameError: $e');
+    }
 
     try {
       profileImage = dataController!.userDocumentSnapshot!.get('image');

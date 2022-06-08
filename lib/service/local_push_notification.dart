@@ -3,7 +3,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
+// ignore: depend_on_referenced_packages
 import 'package:timezone/timezone.dart' as tz;
+// ignore: depend_on_referenced_packages
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
@@ -18,7 +20,7 @@ class LocalNotificationService {
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-            android: AndroidInitializationSettings("@mipmap/ic_launcher"),
+            android: AndroidInitializationSettings("@drawable/ic_notification"),
             iOS: IOSInitializationSettings());
 
     final details = await _flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
@@ -43,10 +45,13 @@ class LocalNotificationService {
   static NotificationDetails notificationDetails = const NotificationDetails(
     android: AndroidNotificationDetails(
       'channel',
-      'mychanel',
+      'myChannel',
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
+      icon: "@drawable/ic_notification",
+      largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+
     ),
     iOS: IOSNotificationDetails(),
   );

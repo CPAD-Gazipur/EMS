@@ -38,16 +38,18 @@ class _HomeScreenState extends State<HomeScreen> {
       final Uri deepLink = dynamicLinkData.link;
       handleDeepLink(deepLink);
     }).onError((error) {
-      debugPrint('onLink error');
-      debugPrint(error.message);
+      debugPrint('onLink error: ${error.message}');
     });
 
     final PendingDynamicLinkData? pendingDynamicLinkData =
         await FirebaseDynamicLinks.instance.getInitialLink();
 
-    final Uri pendingUri = pendingDynamicLinkData!.link;
+    final Uri? pendingUri = pendingDynamicLinkData?.link;
 
-    handleDeepLink(pendingUri);
+    if(pendingUri != null){
+      handleDeepLink(pendingUri);
+    }
+
   }
 
   handleDeepLink(Uri deepLink) {
