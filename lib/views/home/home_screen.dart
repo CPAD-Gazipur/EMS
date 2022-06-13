@@ -1,9 +1,10 @@
-import 'package:ems/views/home_bottom_bar/widgets/custom_app_bar.dart';
-import 'package:ems/views/home_bottom_bar/widgets/event_i_join.dart';
-import 'package:ems/views/home_bottom_bar/widgets/events_feed.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'widgets/custom_app_bar.dart';
+import 'widgets/event_i_join.dart';
+import 'widgets/events_feed.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -26,14 +27,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomAppBar(),
+                const CustomAppBar(),
                 Text('What going on today?',
                 style: GoogleFonts.raleway(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),),
                 SizedBox(height: Get.height * 0.02,),
-                EventFeeds(),
+                const EventFeeds(),
                 EventIJoin(),
               ],
             ),

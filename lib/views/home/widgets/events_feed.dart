@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/views/event_view/event_page_view.dart';
@@ -71,7 +72,21 @@ class EventFeeds extends StatelessWidget {
               child: CircleAvatar(
                 radius: 25,
                 backgroundColor: Colors.blue,
-                backgroundImage: NetworkImage(profileImage),
+                child: CachedNetworkImage(
+                  imageUrl: profileImage,
+                  fit: BoxFit.contain,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
+                    ),
+                  ),
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
             ),
             const SizedBox(
@@ -164,14 +179,29 @@ class EventFeeds extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {},
-            child: Container(
-              width: double.infinity,
-              height: Get.width * 0.5,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                    image: NetworkImage(image), fit: BoxFit.cover),
+            child: CachedNetworkImage(
+              imageUrl: image,
+              fit: BoxFit.contain,
+              imageBuilder: (context, imageProvider) => Container(
+                width: double.infinity,
+                height: Get.width * 0.5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image:
+                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                ),
               ),
+              placeholder: (context, url) => SizedBox(
+                width: double.infinity,
+                height: Get.width * 0.5,
+                child: const Center(
+                  child: CircularProgressIndicator.adaptive(strokeWidth: 2,),
+                ),
+              ),
+              errorWidget: (context, url, error) => SizedBox(
+                  width: double.infinity,
+                  height: Get.width * 0.5,
+                  child: const Center(child: Icon(Icons.error))),
             ),
           ),
           const SizedBox(
@@ -206,9 +236,11 @@ class EventFeeds extends StatelessWidget {
                 ),
                 Text(
                   eventName,
+                  maxLines: 1,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
+                    letterSpacing: 0.1,
                   ),
                 ),
                 const Spacer(),
@@ -313,8 +345,9 @@ class EventFeeds extends StatelessWidget {
                 width: 20,
               ),
               InkWell(
-                onTap: (){
-                  Get.snackbar('Developing....', 'This feature is under development');
+                onTap: () {
+                  Get.snackbar(
+                      'Developing....', 'This feature is under development');
                 },
                 child: Container(
                   height: 30,
@@ -337,8 +370,9 @@ class EventFeeds extends StatelessWidget {
               ),
               const SizedBox(width: 20),
               InkWell(
-                onTap: (){
-                  Get.snackbar('Developing....', 'This feature is under development');
+                onTap: () {
+                  Get.snackbar(
+                      'Developing....', 'This feature is under development');
                 },
                 child: Container(
                   height: 30,
