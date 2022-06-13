@@ -20,7 +20,7 @@ class LocalNotificationService {
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-            android: AndroidInitializationSettings("@drawable/ic_notification"),
+            android: AndroidInitializationSettings('@drawable/ic_notification'),
             iOS: IOSInitializationSettings());
 
     final details = await _flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
@@ -49,7 +49,7 @@ class LocalNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      icon: "@drawable/ic_notification",
+      icon: '@drawable/ic_notification',
       largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
 
     ),

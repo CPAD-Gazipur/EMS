@@ -1,6 +1,6 @@
 import  'dart:io';
 
-import 'package:ems/views/home/home_screen.dart';
+import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/profile/create_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class AuthController extends GetxController {
         .signInWithEmailAndPassword(email: email, password: password)
         .then((value) {
       isLoading(false);
-      Get.offAll(() => const HomeScreen());
+      Get.offAll(() => const HomeBottomBarScreen());
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
@@ -71,7 +71,7 @@ class AuthController extends GetxController {
         Get.to(() => const CreateProfile());
       }
       else{
-        Get.offAll(()=> const HomeScreen());
+        Get.offAll(()=> const HomeBottomBarScreen());
       }
 
     }).catchError((e) {
@@ -158,7 +158,7 @@ class AuthController extends GetxController {
       'image': imageUrl,
     }).then((value) {
       isProfileDataUploading(false);
-      Get.offAll(()=> const HomeScreen());
+      Get.offAll(()=> const HomeBottomBarScreen());
     }).catchError((e) {
       isProfileDataUploading(false);
       String error = e.toString().split("] ")[1];

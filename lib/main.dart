@@ -1,5 +1,5 @@
 import 'package:ems/service/local_push_notification.dart';
-import 'package:ems/views/home/home_screen.dart';
+import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/on_boarding/on_boarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: FirebaseAuth.instance.currentUser?.uid == null ? const OnBoardingScreen() : const HomeScreen(),
+      home: FirebaseAuth.instance.currentUser?.uid == null ? const OnBoardingScreen() : const HomeBottomBarScreen(),
     );
   }
 }

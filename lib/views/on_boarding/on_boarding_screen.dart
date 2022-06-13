@@ -1,5 +1,5 @@
 import 'package:ems/config/app_colors.dart';
-import 'package:ems/views/home/home_screen.dart';
+import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/login_signup/login_signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -123,7 +123,7 @@ class OnBoardingScreen extends StatelessWidget {
                             ),
                           ) : Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => const HomeScreen(),
+                              builder: (_) => const HomeBottomBarScreen(),
                             ),
                           );
                         },

@@ -187,7 +187,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: eventNameController,
                   validator: (String input) {
                     if (eventNameController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Event name is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Event name is required.',
+                          colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -201,7 +202,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: locationController,
                   validator: (String input) {
                     if (locationController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Location is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Location is required.',
+                          colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -232,7 +234,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                         color: AppColors.textColor1,
                       ),
                     ),
-                    focusedBorder:  const OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: AppColors.textColorBlue,
                       ),
@@ -268,18 +270,18 @@ class _CreateEventViewState extends State<CreateEventView> {
                 ),
                 const SizedBox(height: 20),
                 buildTextField(
-                  hintText: 'Tags (separate by comma)',
-                  isPassword: false,
-                  textInputType: TextInputType.text,
-                  controller: tagsController,
-                  validator: (String input) {
-                    if (tagsController.text.isEmpty) {
-                      Get.snackbar('Warning', 'One Tag is required.',colorText: Colors.blue);
-                      return '';
-                    }
-                  },
-                  iconData: Icons.tag
-                ),
+                    hintText: 'Tags (separate by comma)',
+                    isPassword: false,
+                    textInputType: TextInputType.text,
+                    controller: tagsController,
+                    validator: (String input) {
+                      if (tagsController.text.isEmpty) {
+                        Get.snackbar('Warning', 'One Tag is required.',
+                            colorText: Colors.blue);
+                        return '';
+                      }
+                    },
+                    iconData: Icons.tag),
                 const SizedBox(
                   height: 10,
                 ),
@@ -290,7 +292,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: maxEntryController,
                   validator: (String input) {
                     if (maxEntryController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Max Entries is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Max Entries is required.',
+                          colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -324,7 +327,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                               color: AppColors.textColor1,
                             ),
                           ),
-                          focusedBorder:  const OutlineInputBorder(
+                          focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                               color: AppColors.textColorBlue,
                             ),
@@ -387,7 +390,7 @@ class _CreateEventViewState extends State<CreateEventView> {
                               color: AppColors.textColor1,
                             ),
                           ),
-                          focusedBorder:  const OutlineInputBorder(
+                          focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                               color: AppColors.textColorBlue,
                             ),
@@ -434,7 +437,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: priceController,
                   validator: (String input) {
                     if (priceController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Price is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Price is required.',
+                          colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -454,7 +458,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                   controller: detailsController,
                   validator: (input) {
                     if (detailsController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Details is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Details is required.',
+                          colorText: Colors.blue);
                       return '';
                     }
                     return null;
@@ -569,17 +574,21 @@ class _CreateEventViewState extends State<CreateEventView> {
                           if (!formKey.currentState!.validate()) {
                             return;
                           } else if (dateController.text.isEmpty) {
-                            Get.snackbar('Warning', 'Event date is required',colorText: Colors.blue);
+                            Get.snackbar('Warning', 'Event date is required',
+                                colorText: Colors.blue);
                             return;
                           } else if (startTimeController.text.isEmpty) {
-                            Get.snackbar('Warning', 'Start Time is required',colorText: Colors.blue);
+                            Get.snackbar('Warning', 'Start Time is required',
+                                colorText: Colors.blue);
                             return;
                           } else if (endTimeController.text.isEmpty) {
-                            Get.snackbar('Warning', 'End Time is required',colorText: Colors.blue);
+                            Get.snackbar('Warning', 'End Time is required',
+                                colorText: Colors.blue);
                             return;
                           } else if (media.isEmpty) {
                             Get.snackbar(
-                                'Warning', 'Need at least one media file',colorText: Colors.blue);
+                                'Warning', 'Need at least one media file',
+                                colorText: Colors.blue);
                             return;
                           } else {
                             if (media.isNotEmpty) {
@@ -633,9 +642,11 @@ class _CreateEventViewState extends State<CreateEventView> {
                               ],
                             };
 
-                            await dataController.createEvent(eventData)
-                            .then((value) {
+                            await dataController
+                                .createEvent(eventData)
+                                .then((value) {
                               dataController.isCreatingEvent(false);
+                              clearControllerAndAllField();
                             });
                           }
                         },
@@ -659,6 +670,20 @@ class _CreateEventViewState extends State<CreateEventView> {
         ),
       ),
     );
+  }
+
+  clearControllerAndAllField() {
+    eventNameController.clear();
+    locationController.clear();
+    dateController.clear();
+    maxEntryController.clear();
+    tagsController.clear();
+    startTimeController.clear();
+    endTimeController.clear();
+    detailsController.clear();
+    priceController.clear();
+    media.clear();
+    setState(() {});
   }
 
   selectMediaDialog(BuildContext context) {
