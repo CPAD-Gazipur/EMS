@@ -10,8 +10,15 @@ import 'package:path/path.dart' as path;
 
 class DataController extends GetxController {
   var isCreatingEvent = false.obs;
+
   FirebaseAuth auth = FirebaseAuth.instance;
+
   DocumentSnapshot? userDocumentSnapshot;
+
+  var allUsers = <DocumentSnapshot>[].obs;
+  var allEvents = <DocumentSnapshot>[].obs;
+
+  var isEventLoading = false.obs;
 
   Future<String> uploadImageToFirebase(File file) async {
     isCreatingEvent(true);
@@ -112,9 +119,54 @@ class DataController extends GetxController {
         });
   }
 
+  getAllUsers() {
+    FirebaseFirestore.instance.collection('users').snapshots().listen((event) {
+      allUsers.value = event.docs;
+    });
+  }
+
+  getAllEvents() {
+    isEventLoading(true);
+
+    FirebaseFirestore.instance.collection('events').snapshots().listen((event) {
+      allEvents.assignAll(event.docs);
+      isEventLoading(false);
+    });
+  }
+
+  savedEvent(List eventSaveUserList, DocumentSnapshot eventData) {
+    if (eventSaveUserList.contains(FirebaseAuth.instance.currentUser!.uid)) {
+      FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
+        'saved_user_list':
+            FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+      }, SetOptions(merge: true));
+    } else {
+      FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
+        'saved_user_list':
+            FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+      }, SetOptions(merge: true));
+    }
+  }
+
+  likeEvent(List eventLikedUserList, DocumentSnapshot eventData){
+    if (eventLikedUserList.contains(FirebaseAuth.instance.currentUser!.uid)) {
+      FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
+        'likes':
+        FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+      }, SetOptions(merge: true));
+    } else {
+      FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
+        'likes':
+        FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+      }, SetOptions(merge: true));
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
     getUserProfileDocumentFromFireStore();
+    getAllUsers();
+    getAllEvents();
   }
 }
