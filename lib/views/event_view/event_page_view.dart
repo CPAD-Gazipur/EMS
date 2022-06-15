@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
@@ -82,7 +83,7 @@ class _EventPageViewState extends State<EventPageView> {
 
     tagCollectively = '';
     for (String element in tags) {
-      tagCollectively += '#${element.trim()}; ';
+      tagCollectively += '#${element.trim()} ';
     }
 
     try {
@@ -131,7 +132,22 @@ class _EventPageViewState extends State<EventPageView> {
                 children: [
                   CircleAvatar(
                     radius: 24,
-                    backgroundImage: NetworkImage(profileImage),
+                    child: CachedNetworkImage(
+                      imageUrl: profileImage,
+                      fit: BoxFit.contain,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
+                      ),
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
@@ -261,16 +277,31 @@ class _EventPageViewState extends State<EventPageView> {
               const SizedBox(
                 height: 10,
               ),
-              Container(
-                height: 190,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  image: DecorationImage(
-                    image: NetworkImage(eventImage),
-                    fit: BoxFit.cover,
+              CachedNetworkImage(
+                imageUrl: eventImage,
+                fit: BoxFit.contain,
+                imageBuilder: (context, imageProvider) => Container(
+                  width: double.infinity,
+                  height: Get.width * 0.5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
                   ),
                 ),
+                placeholder: (context, url) => SizedBox(
+                  width: double.infinity,
+                  height: Get.width * 0.5,
+                  child: const Center(
+                    child: CircularProgressIndicator.adaptive(
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => SizedBox(
+                    width: double.infinity,
+                    height: Get.width * 0.5,
+                    child: const Center(child: Icon(Icons.error))),
               ),
               const SizedBox(
                 height: 10,
