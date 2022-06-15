@@ -108,8 +108,13 @@ class EventFeeds extends StatelessWidget {
             image: eventImage,
             eventName: event.get('event_name'),
             eventData: event,
-            function: () {
-              Get.to(() => const EventPageView());
+            onEventClick: () {
+              Get.to(
+                () => EventPageView(
+                  eventData: event,
+                  user: user,
+                ),
+              );
             }),
         const SizedBox(
           height: 15,
@@ -121,7 +126,7 @@ class EventFeeds extends StatelessWidget {
   Widget buildCard({
     required String image,
     required String eventName,
-    required Function function,
+    required Function onEventClick,
     required DocumentSnapshot eventData,
   }) {
     DataController dataController = Get.find<DataController>();
@@ -159,234 +164,247 @@ class EventFeeds extends StatelessWidget {
       comments = 0;
     }
 
-    return Container(
-      padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 10),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(17),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x000602d3).withOpacity(0.15),
-            spreadRadius: 0.1,
-            blurRadius: 2,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () {},
-            child: CachedNetworkImage(
-              imageUrl: image,
-              fit: BoxFit.contain,
-              imageBuilder: (context, imageProvider) => Container(
-                width: double.infinity,
-                height: Get.width * 0.5,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image:
-                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                ),
-              ),
-              placeholder: (context, url) => SizedBox(
-                width: double.infinity,
-                height: Get.width * 0.5,
-                child: const Center(
-                  child: CircularProgressIndicator.adaptive(strokeWidth: 2,),
-                ),
-              ),
-              errorWidget: (context, url, error) => SizedBox(
+    return InkWell(
+      onTap: () {
+        onEventClick();
+      },
+      child: Container(
+        padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 10),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(17),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0x000602d3).withOpacity(0.15),
+              spreadRadius: 0.1,
+              blurRadius: 2,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                onEventClick();
+              },
+              onDoubleTap: () {
+                dataController.likeEvent(eventLikedUserList, eventData);
+              },
+              child: CachedNetworkImage(
+                imageUrl: image,
+                fit: BoxFit.contain,
+                imageBuilder: (context, imageProvider) => Container(
                   width: double.infinity,
                   height: Get.width * 0.5,
-                  child: const Center(child: Icon(Icons.error))),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  height: 24,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                  ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: const Color(0xFFADD8E6),
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
+                  ),
+                ),
+                placeholder: (context, url) => SizedBox(
+                  width: double.infinity,
+                  height: Get.width * 0.5,
+                  child: const Center(
+                    child: CircularProgressIndicator.adaptive(
+                      strokeWidth: 2,
                     ),
                   ),
-                  child: Text(
-                    eventData.get('event_date').toString().split(',')[0],
+                ),
+                errorWidget: (context, url, error) => SizedBox(
+                    width: double.infinity,
+                    height: Get.width * 0.5,
+                    child: const Center(child: Icon(Icons.error))),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    height: 24,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: const Color(0xFFADD8E6),
+                      ),
+                    ),
+                    child: Text(
+                      eventData.get('event_date').toString().split(',')[0],
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 18,
+                  ),
+                  Text(
+                    eventName,
+                    maxLines: 1,
                     style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      letterSpacing: 0.1,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  width: 18,
-                ),
-                Text(
-                  eventName,
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    letterSpacing: 0.1,
+                  const Spacer(),
+                  InkWell(
+                    onTap: () {
+                      dataController.savedEvent(eventSaveUserList, eventData);
+                    },
+                    child: Icon(
+                      eventSaveUserList
+                              .contains(FirebaseAuth.instance.currentUser!.uid)
+                          ? Icons.bookmark_added
+                          : Icons.bookmark_border_outlined,
+                      size: 24,
+                      color: eventSaveUserList
+                              .contains(FirebaseAuth.instance.currentUser!.uid)
+                          ? Colors.green
+                          : Colors.grey,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                InkWell(
-                  onTap: () {
-                    dataController.savedEvent(eventSaveUserList, eventData);
-                  },
-                  child: Icon(
-                    eventSaveUserList
-                            .contains(FirebaseAuth.instance.currentUser!.uid)
-                        ? Icons.bookmark_added
-                        : Icons.bookmark_border_outlined,
-                    size: 24,
-                    color: eventSaveUserList
-                            .contains(FirebaseAuth.instance.currentUser!.uid)
-                        ? Colors.green
-                        : Colors.grey,
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: Get.width * 0.6,
+                  height: 50,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: joinedUser.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot user = dataController.allUsers
+                          .firstWhere(
+                              (element) => joinedUser[index] == element.id);
+
+                      String image = '';
+                      try {
+                        image = user.get('image');
+                      } catch (e) {
+                        image = '';
+                      }
+                      return Container(
+                        margin: const EdgeInsets.only(left: 10),
+                        child: CircleAvatar(
+                          minRadius: 13,
+                          backgroundImage: NetworkImage(image),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: Get.width * 0.6,
-                height: 50,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: joinedUser.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot user = dataController.allUsers.firstWhere(
-                        (element) => joinedUser[index] == element.id);
-
-                    String image = '';
-                    try {
-                      image = user.get('image');
-                    } catch (e) {
-                      image = '';
-                    }
-                    return Container(
-                      margin: const EdgeInsets.only(left: 10),
-                      child: CircleAvatar(
-                        minRadius: 13,
-                        backgroundImage: NetworkImage(image),
-                      ),
-                    );
+            SizedBox(
+              height: Get.height * 0.01,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 30,
+                ),
+                InkWell(
+                  onTap: () {
+                    dataController.likeEvent(eventLikedUserList, eventData);
                   },
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: Get.height * 0.01,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 30,
-              ),
-              InkWell(
-                onTap: () {
-                  dataController.likeEvent(eventLikedUserList, eventData);
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: eventLikedUserList.contains(
-                                FirebaseAuth.instance.currentUser!.uid)
-                            ? const Color(0xFFD24698).withOpacity(0.05)
-                            : Colors.transparent,
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    eventLikedUserList
-                            .contains(FirebaseAuth.instance.currentUser!.uid)
-                        ? Icons.favorite
-                        : Icons.favorite_outline,
-                    color: eventLikedUserList
-                            .contains(FirebaseAuth.instance.currentUser!.uid)
-                        ? Colors.pinkAccent
-                        : Colors.grey,
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: eventLikedUserList.contains(
+                                  FirebaseAuth.instance.currentUser!.uid)
+                              ? const Color(0xFFD24698).withOpacity(0.05)
+                              : Colors.transparent,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      eventLikedUserList
+                              .contains(FirebaseAuth.instance.currentUser!.uid)
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                      color: eventLikedUserList
+                              .contains(FirebaseAuth.instance.currentUser!.uid)
+                          ? Colors.pinkAccent
+                          : Colors.grey,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 5),
-              Text(
-                '$likes',
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              InkWell(
-                onTap: () {
-                  Get.snackbar(
-                      'Developing....', 'This feature is under development');
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  padding: const EdgeInsets.all(0.5),
-                  child: const Icon(
-                    Icons.chat_bubble_outline,
-                    color: Colors.grey,
+                const SizedBox(width: 5),
+                Text(
+                  '$likes',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
-              const SizedBox(width: 5),
-              Text(
-                '$comments',
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(
+                  width: 20,
                 ),
-              ),
-              const SizedBox(width: 20),
-              InkWell(
-                onTap: () {
-                  Get.snackbar(
-                      'Developing....', 'This feature is under development');
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  padding: const EdgeInsets.all(0.5),
-                  child: const Icon(
-                    Icons.share,
-                    color: Colors.grey,
+                InkWell(
+                  onTap: () {
+                    Get.snackbar(
+                        'Developing....', 'This feature is under development');
+                  },
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    padding: const EdgeInsets.all(0.5),
+                    child: const Icon(
+                      Icons.chat_bubble_outline,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          )
-        ],
+                const SizedBox(width: 5),
+                Text(
+                  '$comments',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                InkWell(
+                  onTap: () {
+                    Get.snackbar(
+                        'Developing....', 'This feature is under development');
+                  },
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    padding: const EdgeInsets.all(0.5),
+                    child: const Icon(
+                      Icons.share,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

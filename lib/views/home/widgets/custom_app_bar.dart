@@ -1,6 +1,5 @@
 import 'package:ems/config/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({Key? key}) : super(key: key);

@@ -140,24 +140,26 @@ class DataController extends GetxController {
         'saved_user_list':
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
+      eventSaveUserList.remove(FirebaseAuth.instance.currentUser!.uid);
     } else {
       FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
         'saved_user_list':
             FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
+      eventSaveUserList.add(FirebaseAuth.instance.currentUser!.uid);
     }
   }
 
-  likeEvent(List eventLikedUserList, DocumentSnapshot eventData){
+  likeEvent(List eventLikedUserList, DocumentSnapshot eventData) {
     if (eventLikedUserList.contains(FirebaseAuth.instance.currentUser!.uid)) {
       FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
         'likes':
-        FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+            FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
     } else {
       FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
         'likes':
-        FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+            FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
     }
   }

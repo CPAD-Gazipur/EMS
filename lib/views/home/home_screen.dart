@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),),
                 SizedBox(height: Get.height * 0.02,),
                 const EventFeeds(),
-                EventIJoin(),
+                const EventIJoin(),
               ],
             ),
           ),
