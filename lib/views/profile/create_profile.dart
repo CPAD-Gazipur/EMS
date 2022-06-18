@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ems/controller/auth_contoller.dart';
 import 'package:ems/widgets/text_field.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,10 +28,13 @@ class _CreateProfileState extends State<CreateProfile> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController dateRangeController = TextEditingController();
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   initState() {
     super.initState();
     authController = Get.put(AuthController());
+    analytics.setCurrentScreen(screenName: 'Create Profile Screen');
   }
 
   @override
@@ -119,7 +123,8 @@ class _CreateProfileState extends State<CreateProfile> {
                   controller: nameController,
                   validator: (String input) {
                     if (nameController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Name is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Name is required.',
+                          colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -135,11 +140,13 @@ class _CreateProfileState extends State<CreateProfile> {
                   controller: phoneController,
                   validator: (String input) {
                     if (phoneController.text.isEmpty) {
-                      Get.snackbar('Warning', 'Phone number is required.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Phone number is required.',
+                          colorText: Colors.blue);
                       return '';
                     } else if (phoneController.text.length < 11 ||
                         phoneController.text.length > 11) {
-                      Get.snackbar('Warning', 'Enter 11 digit phone number.',colorText: Colors.blue);
+                      Get.snackbar('Warning', 'Enter 11 digit phone number.',
+                          colorText: Colors.blue);
                       return '';
                     }
                   },
@@ -276,13 +283,12 @@ class _CreateProfileState extends State<CreateProfile> {
                                 return;
                               } else if (dateRangeController.text.isEmpty) {
                                 Get.snackbar(
-                                    'Warning', 'Birth Date is required.',colorText: Colors.blue);
+                                    'Warning', 'Birth Date is required.',
+                                    colorText: Colors.blue);
                                 return;
                               } else if (profileImage == null) {
-                                Get.snackbar(
-                                  'Warning',
-                                  "Image is required.",colorText: Colors.blue
-                                );
+                                Get.snackbar('Warning', "Image is required.",
+                                    colorText: Colors.blue);
                                 return;
                               } else {
                                 String imageUrl = await authController
@@ -344,7 +350,7 @@ class _CreateProfileState extends State<CreateProfile> {
     );
     if (picked != null) {
       final DateFormat formatter = DateFormat('MMM dd, yyyy');
-      dateRangeController.text  = formatter.format(picked);
+      dateRangeController.text = formatter.format(picked);
     }
   }
 

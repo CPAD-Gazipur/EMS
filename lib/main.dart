@@ -30,11 +30,12 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: FirebaseAuth.instance.currentUser?.uid == null ? const OnBoardingScreen() : const HomeBottomBarScreen(),
+      home: FirebaseAuth.instance.currentUser?.uid == null
+          ? OnBoardingScreen()
+          : const HomeBottomBarScreen(),
     );
   }
 }
-
 
 Future<void> _handleBackgroundMessages(RemoteMessage message) async {
   // Handle background task here

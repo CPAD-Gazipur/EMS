@@ -1,16 +1,19 @@
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/login_signup/login_signup_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-
 class OnBoardingScreen extends StatelessWidget {
-  const OnBoardingScreen({Key? key}) : super(key: key);
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  OnBoardingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(screenName: 'OnBoard Screen');
     return Scaffold(
       backgroundColor: Colors.white,
       body: SizedBox(
@@ -116,16 +119,17 @@ class OnBoardingScreen extends StatelessWidget {
                       ),
                       child: MaterialButton(
                         onPressed: () {
-                          FirebaseAuth.instance.currentUser?.uid == null ?
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const LoginSignupScreen(),
-                            ),
-                          ) : Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const HomeBottomBarScreen(),
-                            ),
-                          );
+                          FirebaseAuth.instance.currentUser?.uid == null
+                              ? Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginSignupScreen(),
+                                  ),
+                                )
+                              : Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const HomeBottomBarScreen(),
+                                  ),
+                                );
                         },
                         minWidth: MediaQuery.of(context).size.width,
                         color: Colors.white,

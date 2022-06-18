@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,12 +25,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int followers = 0, following = 0;
   String profileImage = '';
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   void initState() {
     super.initState();
     dataController = Get.find<DataController>();
 
-
+    analytics.setCurrentScreen(screenName: 'EventView Screen');
 
     try {
       nameController.text = dataController!.userDocumentSnapshot!.get('name');

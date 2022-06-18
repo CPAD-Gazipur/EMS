@@ -10,6 +10,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../event_view/create_event_view.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class HomeBottomBarScreen extends StatefulWidget {
   const HomeBottomBarScreen({Key? key}) : super(key: key);
@@ -20,6 +21,8 @@ class HomeBottomBarScreen extends StatefulWidget {
 
 class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
   int currentIndex = 0;
+
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   FirebaseDynamicLinks firebaseDynamicLinks = FirebaseDynamicLinks.instance;
 
@@ -47,10 +50,9 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
 
     final Uri? pendingUri = pendingDynamicLinkData?.link;
 
-    if(pendingUri != null){
+    if (pendingUri != null) {
       handleDeepLink(pendingUri);
     }
-
   }
 
   handleDeepLink(Uri deepLink) {
@@ -62,7 +64,8 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
       onItemTap(2);
     }
 
-    debugPrint('Separated Links are: ${separatedLink[1]} & Main Link: $deepLink');
+    debugPrint(
+        'Separated Links are: ${separatedLink[1]} & Main Link: $deepLink');
   }
 
   void listenNotifications() {
@@ -88,6 +91,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     storeNotificationToken();
     FirebaseMessaging.instance.subscribeToTopic('subscription');
     initializeDynamicLink();
+    analytics.setCurrentScreen(screenName: 'BottomBar Screen');
   }
 
   @override

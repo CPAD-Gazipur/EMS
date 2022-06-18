@@ -3,13 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/views/event_view/event_page_view.dart';
 import 'package:ems/views/profile/profile_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EventFeeds extends StatelessWidget {
-  const EventFeeds({Key? key}) : super(key: key);
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  EventFeeds({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +117,9 @@ class EventFeeds extends StatelessWidget {
                   user: user,
                 ),
               );
+              analytics.logEvent(name: 'Event Clicked', parameters: {
+                'event_name': event.get('event_name'),
+              });
             }),
         const SizedBox(
           height: 15,

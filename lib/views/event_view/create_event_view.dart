@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/widgets/icon_with_title.dart';
 import 'package:ems/widgets/text_field.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,10 +45,13 @@ class _CreateEventViewState extends State<CreateEventView> {
   TextEditingController detailsController = TextEditingController();
   TextEditingController priceController = TextEditingController();
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   initState() {
     super.initState();
     dataController = Get.put(DataController());
+    analytics.setCurrentScreen(screenName: 'EventCreate Screen');
   }
 
   @override
@@ -647,6 +651,14 @@ class _CreateEventViewState extends State<CreateEventView> {
                                 .then((value) {
                               dataController.isCreatingEvent(false);
                               clearControllerAndAllField();
+                              analytics
+                                  .logEvent(name: 'Event Created', parameters: {
+                                'event_name': eventNameController.text,
+                                'event_creator_uID':
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                'event_creator_gmail':
+                                    FirebaseAuth.instance.currentUser!.email,
+                              });
                             });
                           }
                         },

@@ -3,6 +3,7 @@ import 'package:ems/controller/auth_contoller.dart';
 import 'package:ems/widgets/bottom_half_container.dart';
 import 'package:ems/widgets/social_button.dart';
 import 'package:ems/widgets/text_field.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,11 +33,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
 
   late AuthController authController;
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   void initState() {
     super.initState();
 
     authController = Get.put(AuthController());
+    analytics.setCurrentScreen(screenName: 'Login Sing up Screen');
   }
 
   @override
@@ -288,100 +292,90 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             controller: emailController,
             validator: (String input) {
               if (input.isEmpty) {
-                Get.snackbar(
-                  'Warning',
-                  'Email is required!',colorText: Colors.blue
-                );
+                Get.snackbar('Warning', 'Email is required!',
+                    colorText: Colors.blue);
                 return '';
               } else if (!input.contains('@')) {
-                Get.snackbar(
-                  'Warning',
-                  'Email is invalid!',colorText: Colors.blue
-                );
+                Get.snackbar('Warning', 'Email is invalid!',
+                    colorText: Colors.blue);
                 return '';
               }
             },
           ),
           Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: TextFormField(
-                controller: passwordController,
-                validator: (input) {
-                  if (input!.isEmpty) {
-                    Get.snackbar(
-                        'Warning',
-                        'Password is required!',colorText: Colors.blue
-                    );
-                    return '';
-                  } else if (input.length < 6) {
-                    Get.snackbar(
-                        'Warning',
-                        'Password must be 6 digit or more!',colorText: Colors.blue
-                    );
-                    return '';
-                  }
-                  return null;
-                },
-                obscureText: isPassword,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.lock_outline,
+            padding: const EdgeInsets.only(bottom: 8),
+            child: TextFormField(
+              controller: passwordController,
+              validator: (input) {
+                if (input!.isEmpty) {
+                  Get.snackbar('Warning', 'Password is required!',
+                      colorText: Colors.blue);
+                  return '';
+                } else if (input.length < 6) {
+                  Get.snackbar('Warning', 'Password must be 6 digit or more!',
+                      colorText: Colors.blue);
+                  return '';
+                }
+                return null;
+              },
+              obscureText: isPassword,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.iconColor,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPassword ? Icons.visibility_off : Icons.visibility,
                     color: AppColors.iconColor,
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPassword ? Icons.visibility_off : Icons.visibility ,
-                      color: AppColors.iconColor,
-                    ),
-                    onPressed: () {
-
-                      setState((){
-                        isPassword = !isPassword;
-                      });
-
-                    },
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: AppColors.textColor1,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12),
-                    ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: AppColors.textColorBlue,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12),
-                    ),
-                  ),
-                  errorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.redAccent,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12),
-                    ),
-                  ),
-                  focusedErrorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.redAccent,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12),
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.all(15),
-                  hintText: 'Password',
-                  hintStyle: const TextStyle(
-                    fontSize: 14,
+                  onPressed: () {
+                    setState(() {
+                      isPassword = !isPassword;
+                    });
+                  },
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
                     color: AppColors.textColor1,
                   ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.textColorBlue,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.redAccent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                focusedErrorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.redAccent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(15),
+                hintText: 'Password',
+                hintStyle: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textColor1,
                 ),
               ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -389,16 +383,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               controller: confirmPasswordController,
               validator: (input) {
                 if (input!.isEmpty) {
-                  Get.snackbar(
-                      'Warning',
-                      'Confirm Password is required!',colorText: Colors.blue
-                  );
+                  Get.snackbar('Warning', 'Confirm Password is required!',
+                      colorText: Colors.blue);
                   return '';
                 } else if (input != passwordController.text.trim()) {
-                  Get.snackbar(
-                      'Warning',
-                      'Password not match try again!',colorText: Colors.blue
-                  );
+                  Get.snackbar('Warning', 'Password not match try again!',
+                      colorText: Colors.blue);
                   return '';
                 }
                 return null;
@@ -412,15 +402,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    isConfirmPassword ? Icons.visibility_off : Icons.visibility ,
+                    isConfirmPassword ? Icons.visibility_off : Icons.visibility,
                     color: AppColors.iconColor,
                   ),
                   onPressed: () {
-
-                    setState((){
+                    setState(() {
                       isConfirmPassword = !isConfirmPassword;
                     });
-
                   },
                 ),
                 enabledBorder: const OutlineInputBorder(
@@ -511,16 +499,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             controller: emailLoginController,
             validator: (String input) {
               if (input.isEmpty) {
-                Get.snackbar(
-                  'Warning',
-                  'Email is required!',colorText: Colors.blue
-                );
+                Get.snackbar('Warning', 'Email is required!',
+                    colorText: Colors.blue);
                 return '';
               } else if (!input.contains('@')) {
-                Get.snackbar(
-                  'Warning',
-                  'Email is invalid!',colorText: Colors.blue
-                );
+                Get.snackbar('Warning', 'Email is invalid!',
+                    colorText: Colors.blue);
                 return '';
               }
             },
@@ -531,16 +515,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               controller: passwordLoginController,
               validator: (input) {
                 if (input!.isEmpty) {
-                  Get.snackbar(
-                      'Warning',
-                      'Password is required!',colorText: Colors.blue
-                  );
+                  Get.snackbar('Warning', 'Password is required!',
+                      colorText: Colors.blue);
                   return '';
                 } else if (input.length < 6) {
-                  Get.snackbar(
-                      'Warning',
-                      'Password must be 6 digit or more!',colorText: Colors.blue
-                  );
+                  Get.snackbar('Warning', 'Password must be 6 digit or more!',
+                      colorText: Colors.blue);
                   return '';
                 }
                 return null;
@@ -554,15 +534,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    isLoginPassword ? Icons.visibility_off : Icons.visibility ,
+                    isLoginPassword ? Icons.visibility_off : Icons.visibility,
                     color: AppColors.iconColor,
                   ),
                   onPressed: () {
-
-                    setState((){
+                    setState(() {
                       isLoginPassword = !isLoginPassword;
                     });
-
                   },
                 ),
                 enabledBorder: const OutlineInputBorder(
@@ -653,16 +631,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             controller: forgetPasswordController,
                             validator: (String input) {
                               if (input.isEmpty) {
-                                Get.snackbar(
-                                  'Warning',
-                                  'Email is required!',colorText: Colors.blue
-                                );
+                                Get.snackbar('Warning', 'Email is required!',
+                                    colorText: Colors.blue);
                                 return '';
                               } else if (!input.contains('@')) {
-                                Get.snackbar(
-                                  'Warning',
-                                  'Email is invalid!',colorText: Colors.blue
-                                );
+                                Get.snackbar('Warning', 'Email is invalid!',
+                                    colorText: Colors.blue);
                                 return '';
                               }
                             },

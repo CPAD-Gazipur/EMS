@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +15,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    analytics.setCurrentScreen(screenName: 'Home Screen');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const CustomAppBar(),
-                Text('What going on today?',
-                style: GoogleFonts.raleway(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),),
-                SizedBox(height: Get.height * 0.02,),
-                const EventFeeds(),
+                Text(
+                  'What going on today?',
+                  style: GoogleFonts.raleway(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                EventFeeds(),
                 const EventIJoin(),
               ],
             ),
