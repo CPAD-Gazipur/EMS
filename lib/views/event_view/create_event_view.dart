@@ -7,6 +7,7 @@ import 'package:ems/widgets/text_field.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -813,10 +814,16 @@ class _CreateEventViewState extends State<CreateEventView> {
     final XFile? image = await picker.pickImage(
       source: imageSource,
     );
+
     if (image != null) {
+      File compressedFile = await FlutterNativeImage.compressImage(
+        image.path,
+        quality: 50,
+      );
+
       media.add(
         EventMediaModel(
-          image: File(image.path),
+          image: compressedFile,
           video: null,
           isVideo: false,
           thumbnail: null,
@@ -839,7 +846,7 @@ class _CreateEventViewState extends State<CreateEventView> {
       Uint8List? uint8list = await VideoThumbnail.thumbnailData(
         video: video.path,
         imageFormat: ImageFormat.JPEG,
-        quality: 75,
+        quality: 50,
       );
 
       media.add(

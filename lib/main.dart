@@ -8,17 +8,24 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   LocalNotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessages);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  FirebaseCrashlytics.instance
-      .setUserIdentifier(FirebaseAuth.instance.currentUser!.uid);
-  FirebaseCrashlytics.instance.setCustomKey(
-      'Gmail', FirebaseAuth.instance.currentUser!.email.toString());
+
+  if (kDebugMode) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  } else {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    FirebaseCrashlytics.instance
+        .setUserIdentifier(FirebaseAuth.instance.currentUser!.uid);
+    FirebaseCrashlytics.instance.setCustomKey(
+        'Gmail', FirebaseAuth.instance.currentUser!.email.toString());
+  }
+
   runApp(const MyApp());
 }
 

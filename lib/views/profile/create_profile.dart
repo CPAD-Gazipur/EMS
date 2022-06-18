@@ -4,6 +4,7 @@ import 'package:ems/controller/auth_contoller.dart';
 import 'package:ems/widgets/text_field.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -394,7 +395,13 @@ class _CreateProfileState extends State<CreateProfile> {
                   final XFile? image =
                       await picker.pickImage(source: ImageSource.camera);
                   if (image != null) {
-                    profileImage = File(image.path);
+                    File compressedFile =
+                        await FlutterNativeImage.compressImage(
+                      image.path,
+                      quality: 50,
+                    );
+
+                    profileImage = compressedFile;
                     setState(() {});
                     Get.back();
                   }
@@ -429,7 +436,13 @@ class _CreateProfileState extends State<CreateProfile> {
                     source: ImageSource.gallery,
                   );
                   if (image != null) {
-                    profileImage = File(image.path);
+                    File compressedFile =
+                        await FlutterNativeImage.compressImage(
+                      image.path,
+                      quality: 50,
+                    );
+
+                    profileImage = compressedFile;
                     setState(() {});
                     Get.back();
                   }
