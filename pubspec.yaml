@@ -48,6 +48,7 @@ dependencies:
   flutter_local_notifications: ^9.1.4
   firebase_dynamic_links: ^4.2.5
   firebase_analytics: ^9.1.10
+  firebase_crashlytics: ^2.8.2
   http: ^0.13.4
   share_plus: ^4.0.4
   rxdart: ^0.27.4

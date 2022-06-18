@@ -194,6 +194,11 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           ElevatedButton(
               onPressed: () {
+                throw Exception();
+              },
+              child: const Text('Crash App')),
+          ElevatedButton(
+              onPressed: () {
                 createDynamicLink('book');
               },
               child: const Text('Create Dynamic Link')),

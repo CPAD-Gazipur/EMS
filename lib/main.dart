@@ -3,6 +3,7 @@ import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/on_boarding/on_boarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,11 @@ void main() async {
   await Firebase.initializeApp();
   LocalNotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessages);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FirebaseCrashlytics.instance
+      .setUserIdentifier(FirebaseAuth.instance.currentUser!.uid);
+  FirebaseCrashlytics.instance.setCustomKey(
+      'Gmail', FirebaseAuth.instance.currentUser!.email.toString());
   runApp(const MyApp());
 }
 
