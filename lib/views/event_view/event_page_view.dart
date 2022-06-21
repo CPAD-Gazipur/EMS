@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/checkout/checkout_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -220,7 +221,7 @@ class _EventPageViewState extends State<EventPageView> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                        color: const Color(0xFF0000FF),
+                        color: Colors.blue,
                         width: 1.5,
                       ),
                     ),
@@ -405,7 +406,11 @@ class _EventPageViewState extends State<EventPageView> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(
+                          () => CheckOutScreen(eventData: widget.eventData),
+                        );
+                      },
                       child: Container(
                         height: 50,
                         padding: const EdgeInsets.symmetric(
@@ -604,7 +609,7 @@ class _EventPageViewState extends State<EventPageView> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
