@@ -17,8 +17,10 @@ class DataController extends GetxController {
 
   var allUsers = <DocumentSnapshot>[].obs;
   var allEvents = <DocumentSnapshot>[].obs;
+  var joinedEvents = <DocumentSnapshot>[].obs;
 
   var isEventLoading = false.obs;
+  var isUserLoading = false.obs;
 
   Future<String> uploadImageToFirebase(File file) async {
     isCreatingEvent(true);
@@ -120,8 +122,10 @@ class DataController extends GetxController {
   }
 
   getAllUsers() {
+    isUserLoading(true);
     FirebaseFirestore.instance.collection('users').snapshots().listen((event) {
       allUsers.value = event.docs;
+      isUserLoading(false);
     });
   }
 
@@ -130,6 +134,12 @@ class DataController extends GetxController {
 
     FirebaseFirestore.instance.collection('events').snapshots().listen((event) {
       allEvents.assignAll(event.docs);
+
+      joinedEvents.value = allEvents.where((element) {
+        List joinedIDs = element.get('event_joined');
+        return joinedIDs.contains(FirebaseAuth.instance.currentUser!.uid);
+      }).toList();
+
       isEventLoading(false);
     });
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../controller/data_controller.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/event_i_join.dart';
 import 'widgets/events_feed.dart';
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    DataController dataController = Get.find<DataController>();
     return Scaffold(
       backgroundColor: Colors.black.withOpacity(0.03),
       body: SafeArea(
@@ -49,7 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: Get.height * 0.02,
                 ),
                 EventFeeds(),
-                const EventIJoin(),
+                Obx(
+                  () => dataController.isUserLoading.value
+                      ? const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        )
+                      : const EventIJoin(),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
