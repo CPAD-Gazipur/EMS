@@ -43,6 +43,8 @@ class _EventPageViewState extends State<EventPageView> {
   Widget build(BuildContext context) {
     analytics.setCurrentScreen(screenName: 'EventView Screen');
 
+    bool isJoin = dataController.joinedEvents.contains(widget.eventData);
+
     try {
       userName = widget.user.get('name');
     } catch (e) {
@@ -432,9 +434,16 @@ class _EventPageViewState extends State<EventPageView> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.to(
-                          () => CheckOutScreen(eventData: widget.eventData),
-                        );
+                        if (isJoin) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text('You already join into this event.'),
+                          ));
+                        } else {
+                          Get.to(
+                            () => CheckOutScreen(eventData: widget.eventData),
+                          );
+                        }
                       },
                       child: Container(
                         height: 50,
@@ -453,12 +462,13 @@ class _EventPageViewState extends State<EventPageView> {
                                 offset: const Offset(0, 1),
                               ),
                             ]),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Join',
+                            isJoin ? 'Already Joined' : 'Join',
                             style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
+                              color: isJoin ? Colors.grey : Colors.black,
+                              fontWeight:
+                                  isJoin ? FontWeight.w500 : FontWeight.w600,
                               fontSize: 16,
                             ),
                           ),
