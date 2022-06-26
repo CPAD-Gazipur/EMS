@@ -52,7 +52,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
               onPressed: () {
                 Get.back();
               },
-              child: const Text('Go Home!')),
+              child: const Text('Go Back!')),
         ],
       ),
     );

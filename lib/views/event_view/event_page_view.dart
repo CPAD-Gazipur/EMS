@@ -318,7 +318,9 @@ class _EventPageViewState extends State<EventPageView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     image: DecorationImage(
-                        image: imageProvider, fit: BoxFit.cover),
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 placeholder: (context, url) => SizedBox(

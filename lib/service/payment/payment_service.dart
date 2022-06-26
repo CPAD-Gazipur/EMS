@@ -5,10 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_credentials.dart';
 import 'package:ems/views/success/success_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+
+import '../notification/send_local_notification.dart';
 
 Map<String, dynamic>? paymentIntentData;
 
@@ -16,7 +19,7 @@ Future<void> makePayment(
   BuildContext context, {
   String? amount,
   String? eventID,
-  int? totalTicket,
+  required int totalTicket,
 }) async {
   try {
     paymentIntentData = await createPaymentIntent(amount!, 'USD');
@@ -41,7 +44,7 @@ Future<void> makePayment(
     displayPaymentSheet(
       context,
       eventID!,
-      totalTicket!,
+      totalTicket,
     );
   } catch (e, s) {
     debugPrint('Exception: $e \n $s');
@@ -66,7 +69,7 @@ void displayPaymentSheet(
             {
               'event_joined': FieldValue.arrayUnion(
                   [FirebaseAuth.instance.currentUser!.uid]),
-              'event_max_entries': FieldValue.increment(-(totalTicket)),
+              'event_max_entries': FieldValue.increment(-totalTicket)
             },
             SetOptions(merge: true),
           ).then(
@@ -86,6 +89,14 @@ void displayPaymentSheet(
             ),
           ),
         );
+
+    String? token = await FirebaseMessaging.instance.getToken();
+    sendNotification(
+      title: 'Payment Successful',
+      body: 'You have successful purchases a new event',
+      token: token!,
+    );
+
     Get.to(() => const SuccessScreen());
     /*Timer(const Duration(seconds: 4), () {
       Get.back();

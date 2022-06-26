@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
+import '../../service/notification/send_local_notification.dart';
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -24,40 +26,6 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     LocalNotificationService.initialize(isSchedule: true);
     FirebaseMessaging.instance.subscribeToTopic('subscription');
-  }
-
-  sendNotification(String title, String token) async {
-    final data = {
-      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-      'id': '1',
-      'status': 'done',
-      'message': title,
-    };
-
-    try {
-      http.Response response = await http.post(
-        Uri.parse(AppCredential.fcmNotificationUrl),
-        headers: <String, String>{
-          'Content-Type': AppCredential.headerContentType,
-          'Authorization': AppCredential.fcmAuthorizationKey,
-        },
-        body: jsonEncode(<String, dynamic>{
-          'notification': <String, dynamic>{
-            'title': title,
-            'body': 'Test Notification',
-          },
-          'priority': 'high',
-          'data': data,
-          'to': token,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        Get.snackbar('Success', 'Notification Send', colorText: Colors.blue);
-      }
-    } catch (e) {
-      Get.snackbar('Warning', 'Error: $e', colorText: Colors.blue);
-    }
   }
 
   sendNotificationToGroup(String title) async {
@@ -163,7 +131,11 @@ class _ChatScreenState extends State<ChatScreen> {
           ElevatedButton(
             onPressed: () async {
               String? token = await FirebaseMessaging.instance.getToken();
-              sendNotification('Check Notification', token!);
+              sendNotification(
+                title: 'Check Notification',
+                body: 'Send Successfully',
+                token: token!,
+              );
             },
             child: const Text('Send Notification'),
           ),
