@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
+import 'package:ems/service/payment/payment_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +17,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   String eventImage = '';
   int serviceFee = 2;
   int totalTicket = 1;
+  int selectedPaymentMethod = 0;
+
+  void setSelectedPaymentMethod(int value) {
+    setState(() {
+      selectedPaymentMethod = value;
+    });
+  }
 
   @override
   void initState() {
@@ -196,6 +204,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 ),
               ),
               SizedBox(height: Get.height * 0.04),
+              const Spacer(),
               const Text(
                 'Payment Method',
                 style: TextStyle(
@@ -203,7 +212,75 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   fontSize: 16,
                 ),
               ),
-              const Spacer(),
+              const Divider(thickness: 2),
+              InkWell(
+                onTap: () {
+                  setSelectedPaymentMethod(0);
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      width: 48,
+                      height: 34,
+                      child: Image.asset(
+                        'assets/images/stripe.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const Text(
+                      'Stripe',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const Spacer(),
+                    Radio(
+                      value: 0,
+                      groupValue: selectedPaymentMethod,
+                      onChanged: (int? value) {
+                        setSelectedPaymentMethod(value!);
+                      },
+                      activeColor: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  setSelectedPaymentMethod(1);
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      width: 48,
+                      height: 34,
+                      child: Image.asset(
+                        'assets/images/paypal.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const Text(
+                      'PayPal',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const Spacer(),
+                    Radio(
+                      value: 1,
+                      groupValue: selectedPaymentMethod,
+                      onChanged: (int? value) {
+                        setSelectedPaymentMethod(value!);
+                      },
+                      activeColor: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
               const Divider(thickness: 2),
               Row(
                 children: [
@@ -321,7 +398,20 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    if (selectedPaymentMethod == 0) {
+                      makePayment(
+                        context,
+                        amount:
+                            '${(int.parse(widget.eventData.get('event_price')) * totalTicket) + serviceFee}',
+                        eventID: widget.eventData.id,
+                        totalTicket: totalTicket,
+                      );
+                    } else if (selectedPaymentMethod == 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('PayPal is not available right now!')));
+                    }
+                  },
                   child: Container(
                     height: 50,
                     width: double.infinity,

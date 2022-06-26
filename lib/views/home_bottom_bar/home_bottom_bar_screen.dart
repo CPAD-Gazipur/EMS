@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
-import 'package:ems/service/local_push_notification.dart';
+import 'package:ems/service/notification/local_push_notification.dart';
 import 'package:ems/views/chat/chat_view.dart';
 import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/profile/profile_screen.dart';

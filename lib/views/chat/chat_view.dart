@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:ems/config/app_credentials.dart';
-import 'package:ems/service/local_push_notification.dart';
+import 'package:ems/service/notification/local_push_notification.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

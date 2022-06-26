@@ -1,4 +1,5 @@
-import 'package:ems/service/local_push_notification.dart';
+import 'package:ems/config/app_credentials.dart';
+import 'package:ems/service/notification/local_push_notification.dart';
 import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/on_boarding/on_boarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,10 +9,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = AppCredential.stripePublishableKey;
   await Firebase.initializeApp();
   LocalNotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessages);
@@ -25,7 +28,6 @@ void main() async {
     FirebaseCrashlytics.instance.setCustomKey(
         'Gmail', FirebaseAuth.instance.currentUser!.email.toString());
   }
-
   runApp(const MyApp());
 }
 
