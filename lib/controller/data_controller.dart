@@ -184,23 +184,23 @@ class DataController extends GetxController {
         'subscribe_user_list':
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
-
-      FirebaseMessaging.instance.subscribeToTopic(eventData.id);
+      FirebaseMessaging.instance.unsubscribeFromTopic(eventData.id);
       sendNotification(
-          title: 'Subscribed',
+          title: 'Unsubscribed',
           body:
-              'You have subscribed this event. You will get future update about this event.',
+              'You have been unsubscribed from this event. You will not get any future notification about this event.',
           token: token!);
     } else {
       FirebaseFirestore.instance.collection('events').doc(eventData.id).set({
         'subscribe_user_list':
             FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
-      FirebaseMessaging.instance.unsubscribeFromTopic(eventData.id);
+
+      FirebaseMessaging.instance.subscribeToTopic(eventData.id);
       sendNotification(
           title: 'Subscribed',
           body:
-              'You have been unsubscribed from this event. You will not get any future notification about this event.',
+              'You have subscribed this event. You will get future update about this event.',
           token: token!);
     }
   }

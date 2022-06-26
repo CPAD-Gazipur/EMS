@@ -629,7 +629,8 @@ class _CreateEventViewState extends State<CreateEventView> {
                               'event_name': eventNameController.text,
                               'event_location': locationController.text,
                               'event_date': dateController.text,
-                              'event_max_entries': maxEntryController.text,
+                              'event_max_entries':
+                                  int.parse(maxEntryController.text),
                               'event_start_time': startTimeController.text,
                               'event_end_time': endTimeController.text,
                               'event_price': priceController.text,
