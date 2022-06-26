@@ -225,31 +225,34 @@ class EventFeeds extends StatelessWidget {
               onDoubleTap: () {
                 dataController.likeEvent(eventLikedUserList, eventData);
               },
-              child: CachedNetworkImage(
-                imageUrl: image,
-                fit: BoxFit.contain,
-                imageBuilder: (context, imageProvider) => Container(
-                  width: double.infinity,
-                  height: Get.width * 0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                        image: imageProvider, fit: BoxFit.cover),
-                  ),
-                ),
-                placeholder: (context, url) => SizedBox(
-                  width: double.infinity,
-                  height: Get.width * 0.5,
-                  child: const Center(
-                    child: CircularProgressIndicator.adaptive(
-                      strokeWidth: 2,
-                    ),
-                  ),
-                ),
-                errorWidget: (context, url, error) => SizedBox(
+              child: Hero(
+                tag: image,
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  fit: BoxFit.contain,
+                  imageBuilder: (context, imageProvider) => Container(
                     width: double.infinity,
                     height: Get.width * 0.5,
-                    child: const Center(child: Icon(Icons.error))),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
+                    ),
+                  ),
+                  placeholder: (context, url) => SizedBox(
+                    width: double.infinity,
+                    height: Get.width * 0.5,
+                    child: const Center(
+                      child: CircularProgressIndicator.adaptive(
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => SizedBox(
+                      width: double.infinity,
+                      height: Get.width * 0.5,
+                      child: const Center(child: Icon(Icons.error))),
+                ),
               ),
             ),
             const SizedBox(

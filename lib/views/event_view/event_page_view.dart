@@ -45,6 +45,8 @@ class _EventPageViewState extends State<EventPageView> {
 
     bool isJoin = dataController.joinedEvents.contains(widget.eventData);
 
+    dataController.subscribeList(widget.eventData);
+
     try {
       userName = widget.user.get('name');
     } catch (e) {
@@ -309,33 +311,36 @@ class _EventPageViewState extends State<EventPageView> {
               const SizedBox(
                 height: 10,
               ),
-              CachedNetworkImage(
-                imageUrl: eventImage,
-                fit: BoxFit.contain,
-                imageBuilder: (context, imageProvider) => Container(
-                  width: double.infinity,
-                  height: Get.width * 0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                placeholder: (context, url) => SizedBox(
-                  width: double.infinity,
-                  height: Get.width * 0.5,
-                  child: const Center(
-                    child: CircularProgressIndicator.adaptive(
-                      strokeWidth: 2,
-                    ),
-                  ),
-                ),
-                errorWidget: (context, url, error) => SizedBox(
+              Hero(
+                tag: eventImage,
+                child: CachedNetworkImage(
+                  imageUrl: eventImage,
+                  fit: BoxFit.contain,
+                  imageBuilder: (context, imageProvider) => Container(
                     width: double.infinity,
                     height: Get.width * 0.5,
-                    child: const Center(child: Icon(Icons.error))),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  placeholder: (context, url) => SizedBox(
+                    width: double.infinity,
+                    height: Get.width * 0.5,
+                    child: const Center(
+                      child: CircularProgressIndicator.adaptive(
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => SizedBox(
+                      width: double.infinity,
+                      height: Get.width * 0.5,
+                      child: const Center(child: Icon(Icons.error))),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -618,7 +623,12 @@ class _EventPageViewState extends State<EventPageView> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    dataController.subscribeEvent(
+                        dataController.subscribeUserList, widget.eventData);
+
+                    setState(() {});
+                  },
                   child: Container(
                     height: 50,
                     width: double.infinity,
@@ -634,11 +644,17 @@ class _EventPageViewState extends State<EventPageView> {
                         ),
                       ],
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        'Subscribe',
+                        dataController.subscribeUserList.contains(
+                                FirebaseAuth.instance.currentUser!.uid)
+                            ? 'Unsubscribe'
+                            : 'Subscribe',
                         style: TextStyle(
-                          color: AppColors.activeColor,
+                          color: dataController.subscribeUserList.contains(
+                                  FirebaseAuth.instance.currentUser!.uid)
+                              ? Colors.grey
+                              : AppColors.activeColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                         ),
