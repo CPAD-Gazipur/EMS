@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/service/notification/local_push_notification.dart';
 import 'package:ems/views/chat/chat_view.dart';
+import 'package:ems/views/event_view/event_page_view.dart';
 import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../event_view/create_event_view.dart';
@@ -51,17 +53,22 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     final Uri? pendingUri = pendingDynamicLinkData?.link;
 
     if (pendingUri != null) {
-      handleDeepLink(pendingUri);
+      await handleDeepLink(pendingUri);
     }
   }
 
-  handleDeepLink(Uri deepLink) {
+  handleDeepLink(Uri deepLink) async {
     List<String> separatedLink = [];
 
     separatedLink.addAll(deepLink.path.split('/'));
 
     if (separatedLink[1] == 'book') {
       onItemTap(2);
+    } else if (separatedLink[1] == 'event') {
+      debugPrint('Event ID: ${separatedLink[2]}');
+      debugPrint('User ID: ${separatedLink[3]}');
+
+      getEventAndUserDocument(separatedLink[2], separatedLink[3]);
     }
 
     debugPrint(
@@ -189,4 +196,13 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     const ChatScreen(),
     const ProfileScreen(),
   ];
+}
+
+Future getEventAndUserDocument(String eventID, String userID) async {
+  final DocumentSnapshot eventDoc =
+      await FirebaseFirestore.instance.collection('events').doc(eventID).get();
+  final DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(userID).get();
+
+  Get.to(() => EventPageView(eventData: eventDoc, user: userDoc));
 }

@@ -5,13 +5,38 @@ import 'package:ems/views/event_view/event_page_view.dart';
 import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EventFeeds extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   EventFeeds({Key? key}) : super(key: key);
+
+  createDynamicLink(String docID) async {
+    String url = 'https://emsapp.page.link';
+
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://emsapp.page.link',
+      link: Uri.parse('$url/$docID'),
+      androidParameters: const AndroidParameters(
+        packageName: 'com.alaminkarno.ems.ems',
+        minimumVersion: 0,
+      ),
+      iosParameters: const IOSParameters(
+        bundleId: 'com.alaminkarno.ems.ems',
+        minimumVersion: '0',
+      ),
+    );
+
+    final ShortDynamicLink shortLink =
+        await FirebaseDynamicLinks.instance.buildShortLink(parameters);
+    Uri shortUri = shortLink.shortUrl;
+    String shortUrl = shortUri.toString();
+    await Share.share(shortUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +135,7 @@ class EventFeeds extends StatelessWidget {
             image: eventImage,
             eventName: event.get('event_name'),
             eventData: event,
+            user: user,
             onEventClick: () {
               Get.to(
                 () => EventPageView(
@@ -133,6 +159,7 @@ class EventFeeds extends StatelessWidget {
     required String eventName,
     required Function onEventClick,
     required DocumentSnapshot eventData,
+    required DocumentSnapshot user,
   }) {
     DataController dataController = Get.find<DataController>();
 
@@ -393,8 +420,7 @@ class EventFeeds extends StatelessWidget {
                 const SizedBox(width: 20),
                 InkWell(
                   onTap: () {
-                    Get.snackbar(
-                        'Developing....', 'This feature is under development');
+                    createDynamicLink('event/${eventData.id}/${user.id}');
                   },
                   child: Container(
                     height: 30,
