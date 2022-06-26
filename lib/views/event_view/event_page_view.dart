@@ -34,6 +34,7 @@ class _EventPageViewState extends State<EventPageView> {
 
   List eventSaveUserList = [];
   List eventLikedUserList = [];
+  List subscribeUserList = [];
 
   int likes = 0;
   int comments = 0;
@@ -44,8 +45,6 @@ class _EventPageViewState extends State<EventPageView> {
     analytics.setCurrentScreen(screenName: 'EventView Screen');
 
     bool isJoin = dataController.joinedEvents.contains(widget.eventData);
-
-    dataController.subscribeList(widget.eventData);
 
     try {
       userName = widget.user.get('name');
@@ -115,6 +114,12 @@ class _EventPageViewState extends State<EventPageView> {
       eventSaveUserList = widget.eventData.get('saved_user_list');
     } catch (e) {
       eventSaveUserList = [];
+    }
+
+    try {
+      subscribeUserList = widget.eventData.get('subscribe_user_list');
+    } catch (e) {
+      subscribeUserList = [].obs;
     }
 
     createDynamicLink(String docID) async {
@@ -625,7 +630,7 @@ class _EventPageViewState extends State<EventPageView> {
                 child: InkWell(
                   onTap: () {
                     dataController.subscribeEvent(
-                        dataController.subscribeUserList, widget.eventData);
+                        subscribeUserList, widget.eventData);
 
                     setState(() {});
                   },
@@ -646,12 +651,12 @@ class _EventPageViewState extends State<EventPageView> {
                     ),
                     child: Center(
                       child: Text(
-                        dataController.subscribeUserList.contains(
+                        subscribeUserList.contains(
                                 FirebaseAuth.instance.currentUser!.uid)
                             ? 'Unsubscribe'
                             : 'Subscribe',
                         style: TextStyle(
-                          color: dataController.subscribeUserList.contains(
+                          color: subscribeUserList.contains(
                                   FirebaseAuth.instance.currentUser!.uid)
                               ? Colors.grey
                               : AppColors.activeColor,
