@@ -13,7 +13,7 @@ class DataController extends GetxController {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
-  DocumentSnapshot? userDocumentSnapshot, eventSnapShot;
+  DocumentSnapshot? userDocumentSnapshot;
 
   var allUsers = <DocumentSnapshot>[].obs;
   var allEvents = <DocumentSnapshot>[].obs;
@@ -97,16 +97,6 @@ class DataController extends GetxController {
         .snapshots()
         .listen((event) {
       userDocumentSnapshot = event;
-    });
-  }
-
-  getEventFromFireStore(String eventID) {
-    FirebaseFirestore.instance
-        .collection('events')
-        .doc(eventID)
-        .snapshots()
-        .listen((event) {
-      eventSnapShot = event;
     });
   }
 
