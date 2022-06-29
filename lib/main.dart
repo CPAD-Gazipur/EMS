@@ -23,10 +23,13 @@ void main() async {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
   } else {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    FirebaseCrashlytics.instance
-        .setUserIdentifier(FirebaseAuth.instance.currentUser!.uid);
-    FirebaseCrashlytics.instance.setCustomKey(
-        'Gmail', FirebaseAuth.instance.currentUser!.email.toString());
+
+    if (FirebaseAuth.instance.currentUser?.uid != null) {
+      FirebaseCrashlytics.instance
+          .setUserIdentifier(FirebaseAuth.instance.currentUser!.uid);
+      FirebaseCrashlytics.instance.setCustomKey(
+          'Gmail', FirebaseAuth.instance.currentUser!.email.toString());
+    }
   }
   runApp(const MyApp());
 }

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
+import 'package:ems/service/notification/send_local_notification.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -447,39 +448,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            MaterialButton(
-                              onPressed: () {
-                                if (widget.isOtherUser!) {
-                                  followUser(
-                                    myFollowingList,
-                                    widget.userSnapshot!,
-                                  );
-                                }
-                              },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              color: widget.isOtherUser!
-                                  ? userFollowerList.contains(FirebaseAuth
-                                          .instance.currentUser!.uid)
-                                      ? AppColors.activeColor.withOpacity(0.5)
-                                      : AppColors.activeColor
-                                  : Colors.grey,
-                              child: Text(
-                                widget.isOtherUser!
+                            if (widget.isOtherUser!)
+                              MaterialButton(
+                                onPressed: () {
+                                  if (widget.isOtherUser!) {
+                                    followUser(
+                                      nameController.text,
+                                      myFollowingList,
+                                      widget.userSnapshot!,
+                                    );
+                                  }
+                                },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                color: widget.isOtherUser!
                                     ? userFollowerList.contains(FirebaseAuth
                                             .instance.currentUser!.uid)
-                                        ? 'Unfollow'
-                                        : 'Follow'
-                                    : 'Followed',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.3,
+                                        ? AppColors.activeColor.withOpacity(0.5)
+                                        : AppColors.activeColor
+                                    : Colors.grey,
+                                child: Text(
+                                  userFollowerList.contains(FirebaseAuth
+                                          .instance.currentUser!.uid)
+                                      ? 'Unfollow'
+                                      : 'Follow',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.3,
+                                  ),
                                 ),
                               ),
-                            )
                           ],
                         ),
                       ),
@@ -532,7 +533,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-followUser(List myFollowingList, DocumentSnapshot userData) {
+followUser(String name, List myFollowingList, DocumentSnapshot userData) {
   if (myFollowingList.contains(userData.id)) {
     FirebaseFirestore.instance
         .collection('users')
@@ -559,6 +560,12 @@ followUser(List myFollowingList, DocumentSnapshot userData) {
       'followers':
           FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
     }, SetOptions(merge: true));
+
+    sendNotification(
+      title: 'Following...',
+      body: '$name start following you.',
+      token: userData.get('token'),
+    );
 
     myFollowingList.add(userData.id);
   }

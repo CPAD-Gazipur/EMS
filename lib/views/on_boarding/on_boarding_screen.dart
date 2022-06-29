@@ -5,6 +5,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class OnBoardingScreen extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -120,16 +121,8 @@ class OnBoardingScreen extends StatelessWidget {
                       child: MaterialButton(
                         onPressed: () {
                           FirebaseAuth.instance.currentUser?.uid == null
-                              ? Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const LoginSignupScreen(),
-                                  ),
-                                )
-                              : Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const HomeBottomBarScreen(),
-                                  ),
-                                );
+                              ? Get.to(() => const LoginSignupScreen())
+                              : Get.to(() => const HomeBottomBarScreen());
                         },
                         minWidth: MediaQuery.of(context).size.width,
                         color: Colors.white,
@@ -153,7 +146,7 @@ class OnBoardingScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
