@@ -192,7 +192,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     CommunityScreen(),
     const CreateEventView(),
     const ChatScreen(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
 }
 

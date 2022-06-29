@@ -121,8 +121,8 @@ class OnBoardingScreen extends StatelessWidget {
                       child: MaterialButton(
                         onPressed: () {
                           FirebaseAuth.instance.currentUser?.uid == null
-                              ? Get.to(() => const LoginSignupScreen())
-                              : Get.to(() => const HomeBottomBarScreen());
+                              ? Get.offAll(() => const LoginSignupScreen())
+                              : Get.offAll(() => const HomeBottomBarScreen());
                         },
                         minWidth: MediaQuery.of(context).size.width,
                         color: Colors.white,

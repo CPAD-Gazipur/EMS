@@ -1,4 +1,4 @@
-import  'dart:io';
+import 'dart:io';
 
 import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
 import 'package:ems/views/profile/create_profile.dart';
@@ -17,7 +17,6 @@ class AuthController extends GetxController {
   var isLoading = false.obs;
   var isProfileDataUploading = false.obs;
 
-
   void login({required String email, required String password}) {
     isLoading(true);
 
@@ -29,7 +28,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error,colorText: Colors.blue);
+      Get.snackbar('Warning', error, colorText: Colors.blue);
     });
   }
 
@@ -44,7 +43,7 @@ class AuthController extends GetxController {
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error,colorText: Colors.blue);
+      Get.snackbar('Warning', error, colorText: Colors.blue);
     });
   }
 
@@ -67,17 +66,21 @@ class AuthController extends GetxController {
 
     await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       isLoading(false);
-      if(isSignupScreen){
+      if (isSignupScreen) {
         Get.to(() => const CreateProfile());
-      }
-      else{
-        Get.offAll(()=> const HomeBottomBarScreen());
-      }
+      } else {
+        String? currentUserID = FirebaseAuth.instance.currentUser?.uid;
 
+        if (currentUserID != null) {
+          //getUserDoc(currentUserID);
+        }
+
+        Get.offAll(() => const HomeBottomBarScreen());
+      }
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error,colorText: Colors.blue);
+      Get.snackbar('Warning', error, colorText: Colors.blue);
     });
   }
 
@@ -93,7 +96,7 @@ class AuthController extends GetxController {
       await googleSignIn.signIn();
     } catch (e) {
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error,colorText: Colors.blue);
+      Get.snackbar('Warning', error, colorText: Colors.blue);
     }
   }
 
@@ -104,16 +107,17 @@ class AuthController extends GetxController {
       isLoading(false);
       Get.back();
       Get.snackbar(
-          'Email Sent', 'We have send an Email to reset your password.',colorText: Colors.blue);
+          'Email Sent', 'We have send an Email to reset your password.',
+          colorText: Colors.blue);
     }).catchError((e) {
       isLoading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', 'Error in sending password reset link at $error',colorText: Colors.blue);
+      Get.snackbar('Warning', 'Error in sending password reset link at $error',
+          colorText: Colors.blue);
     });
   }
 
   Future<String> uploadImageToFirebaseStorage(File image) async {
-
     isProfileDataUploading(true);
 
     String imageUrl = '';
@@ -127,22 +131,19 @@ class AuthController extends GetxController {
 
     await taskSnapshot.ref.getDownloadURL().then((value) {
       imageUrl = value;
-
-
     }).catchError((e) {
       isProfileDataUploading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error,colorText: Colors.blue);
+      Get.snackbar('Warning', error, colorText: Colors.blue);
     });
 
-    Get.snackbar('Success', 'Image Uploaded',colorText: Colors.blue);
+    Get.snackbar('Success', 'Image Uploaded', colorText: Colors.blue);
 
-  return imageUrl;
+    return imageUrl;
   }
 
   void uploadProfileDateToFirebase(String imageUrl, String name,
       String phoneNumber, String birthdate, String gender) {
-
     isProfileDataUploading(true);
 
     String uID = auth.currentUser!.uid;
@@ -158,11 +159,31 @@ class AuthController extends GetxController {
       'image': imageUrl,
     }).then((value) {
       isProfileDataUploading(false);
-      Get.offAll(()=> const HomeBottomBarScreen());
+      Get.offAll(() => const HomeBottomBarScreen());
     }).catchError((e) {
       isProfileDataUploading(false);
       String error = e.toString().split("] ")[1];
-      Get.snackbar('Warning', error,colorText: Colors.blue);
+      Get.snackbar('Warning', error, colorText: Colors.blue);
     });
   }
+
+  /*void getUserDoc(String userID) async {
+    final DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+
+    String userName = '';
+
+    debugPrint("userID: ${userDoc.get('name')}");
+    debugPrint("userID: ${userDoc.get('phone')}");
+
+    try {
+      userName = await userDoc.get('name');
+      debugPrint('userInfoFount: $userName');
+    } catch (e) {
+      debugPrint('userInfoNotFount: $e');
+      if (userName.isEmpty) {
+        Get.to(() => const CreateProfile());
+      }
+    }
+  }*/
 }

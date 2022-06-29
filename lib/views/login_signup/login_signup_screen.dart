@@ -40,7 +40,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     super.initState();
 
     authController = Get.put(AuthController());
-    analytics.setCurrentScreen(screenName: 'Login Sing up Screen');
+    analytics.setCurrentScreen(screenName: 'LoginSignupScreen');
   }
 
   @override
