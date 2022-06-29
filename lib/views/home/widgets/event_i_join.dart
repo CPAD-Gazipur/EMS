@@ -78,29 +78,24 @@ class EventIJoin extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Get.to(() => const ProfileScreen());
-                    },
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.blue,
-                      child: CachedNetworkImage(
-                        imageUrl: profileImage,
-                        fit: BoxFit.contain,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: imageProvider, fit: BoxFit.cover),
-                          ),
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.blue,
+                    child: CachedNetworkImage(
+                      imageUrl: profileImage,
+                      fit: BoxFit.contain,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
                         ),
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        ),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
                       ),
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
                   ),
                   const SizedBox(

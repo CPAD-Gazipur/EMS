@@ -90,13 +90,18 @@ class EventFeeds extends StatelessWidget {
 
     return Column(
       children: [
-        Row(
-          children: [
-            InkWell(
-              onTap: () {
-                Get.to(() => const ProfileScreen());
-              },
-              child: CircleAvatar(
+        InkWell(
+          onTap: () {
+            Get.to(
+              () => ProfileScreen(
+                userSnapshot: user,
+                isOtherUser: true,
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
                 radius: 25,
                 backgroundColor: Colors.blue,
                 child: CachedNetworkImage(
@@ -115,18 +120,18 @@ class EventFeeds extends StatelessWidget {
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
-            ),
-            const SizedBox(
-              width: 12,
-            ),
-            Text(
-              userName,
-              style: GoogleFonts.raleway(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
+              const SizedBox(
+                width: 12,
               ),
-            ),
-          ],
+              Text(
+                userName,
+                style: GoogleFonts.raleway(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
         ),
         SizedBox(
           height: Get.height * 0.01,
@@ -143,9 +148,13 @@ class EventFeeds extends StatelessWidget {
                   user: user,
                 ),
               );
-              analytics.logEvent(name: 'Event Clicked', parameters: {
-                'event_name': event.get('event_name'),
+              analytics.logEvent(name: 'EventClicked', parameters: {
+                'event_name':
+                    event.get('event_name').toString().replaceAll(' ', '_'),
               });
+
+              debugPrint(
+                  event.get('event_name').toString().replaceAll(' ', '_'));
             }),
         const SizedBox(
           height: 15,

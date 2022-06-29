@@ -167,7 +167,7 @@ class CommunityScreen extends StatelessWidget {
                           .get('event_details');
                     } else {
                       for (String tag in tags) {
-                        eventTags += '#${tag.trim()} ';
+                        eventTags += '#${tag.trim().replaceAll(' ', '_')} ';
                       }
                     }
 
@@ -183,13 +183,18 @@ class CommunityScreen extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Get.to(() => const ProfileScreen());
-                                },
-                                child: CircleAvatar(
+                          InkWell(
+                            onTap: () {
+                              Get.to(
+                                () => ProfileScreen(
+                                  userSnapshot: userDoc,
+                                  isOtherUser: true,
+                                ),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                CircleAvatar(
                                   radius: 14,
                                   backgroundColor: Colors.blue,
                                   child: CachedNetworkImage(
@@ -212,22 +217,22 @@ class CommunityScreen extends StatelessWidget {
                                         const Icon(Icons.error),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  userName,
-                                  style: GoogleFonts.raleway(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 11,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                const SizedBox(
+                                  width: 5,
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: Text(
+                                    userName,
+                                    style: GoogleFonts.raleway(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 11,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 5),
                           Row(

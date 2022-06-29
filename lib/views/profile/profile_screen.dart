@@ -1,12 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final DocumentSnapshot? userSnapshot;
+  final bool? isOtherUser;
+  const ProfileScreen({Key? key, this.userSnapshot, this.isOtherUser = false})
+      : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -24,63 +29,137 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DataController? dataController;
   int followers = 0, following = 0;
   String profileImage = '';
+  List userFollowerList = [];
+  List myFollowingList = [];
 
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
     super.initState();
+
+    analytics.setCurrentScreen(screenName: 'ProfileScreen');
     dataController = Get.find<DataController>();
-
-    analytics.setCurrentScreen(screenName: 'EventView Screen');
-
-    try {
-      nameController.text = dataController!.userDocumentSnapshot!.get('name');
-    } catch (e) {
-      nameController.text = '';
-      debugPrint('NameError: $e');
-    }
-
-    try {
-      profileImage = dataController!.userDocumentSnapshot!.get('image');
-    } catch (e) {
-      profileImage = '';
-      debugPrint('ProfileImageError: $e');
-    }
-
-    try {
-      locationController.text =
-          dataController!.userDocumentSnapshot!.get('location');
-    } catch (e) {
-      locationController.text = '';
-      debugPrint('LocationError: $e');
-    }
-
-    try {
-      descriptionController.text =
-          dataController!.userDocumentSnapshot!.get('description');
-    } catch (e) {
-      descriptionController.text = '';
-      debugPrint('DescriptionError: $e');
-    }
-
-    try {
-      followers = dataController!.userDocumentSnapshot!.get('followers').length;
-    } catch (e) {
-      followers = 0;
-      debugPrint('FollowersError: $e');
-    }
-
-    try {
-      following = dataController!.userDocumentSnapshot!.get('following').length;
-    } catch (e) {
-      following = 0;
-      debugPrint('FollowingError: $e');
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isOtherUser!) {
+      try {
+        nameController.text = widget.userSnapshot!.get('name');
+      } catch (e) {
+        nameController.text = '';
+        debugPrint('NameError: $e');
+      }
+
+      try {
+        profileImage = widget.userSnapshot!.get('image');
+      } catch (e) {
+        profileImage = '';
+        debugPrint('ProfileImageError: $e');
+      }
+
+      try {
+        locationController.text = widget.userSnapshot!.get('location');
+      } catch (e) {
+        locationController.text = '';
+        debugPrint('LocationError: $e');
+      }
+
+      try {
+        descriptionController.text = widget.userSnapshot!.get('description');
+      } catch (e) {
+        descriptionController.text = '';
+        debugPrint('DescriptionError: $e');
+      }
+
+      try {
+        followers = widget.userSnapshot!.get('followers').length;
+      } catch (e) {
+        followers = 0;
+        debugPrint('FollowersError: $e');
+      }
+
+      try {
+        following = widget.userSnapshot!.get('following').length;
+      } catch (e) {
+        following = 0;
+        debugPrint('FollowingError: $e');
+      }
+
+      try {
+        userFollowerList = widget.userSnapshot!.get('followers');
+      } catch (e) {
+        userFollowerList = [];
+      }
+
+      try {
+        myFollowingList = widget.userSnapshot!.get('following');
+      } catch (e) {
+        myFollowingList = [];
+      }
+    } else {
+      try {
+        nameController.text = dataController!.userDocumentSnapshot!.get('name');
+      } catch (e) {
+        nameController.text = '';
+        debugPrint('NameError: $e');
+      }
+
+      try {
+        profileImage = dataController!.userDocumentSnapshot!.get('image');
+      } catch (e) {
+        profileImage = '';
+        debugPrint('ProfileImageError: $e');
+      }
+
+      try {
+        locationController.text =
+            dataController!.userDocumentSnapshot!.get('location');
+      } catch (e) {
+        locationController.text = '';
+        debugPrint('LocationError: $e');
+      }
+
+      try {
+        descriptionController.text =
+            dataController!.userDocumentSnapshot!.get('description');
+      } catch (e) {
+        descriptionController.text = '';
+        debugPrint('DescriptionError: $e');
+      }
+
+      try {
+        followers =
+            dataController!.userDocumentSnapshot!.get('followers').length;
+      } catch (e) {
+        followers = 0;
+        debugPrint('FollowersError: $e');
+      }
+
+      try {
+        following =
+            dataController!.userDocumentSnapshot!.get('following').length;
+      } catch (e) {
+        following = 0;
+        debugPrint('FollowingError: $e');
+      }
+
+      try {
+        userFollowerList =
+            dataController!.userDocumentSnapshot!.get('followers');
+      } catch (e) {
+        userFollowerList = [];
+      }
+
+      try {
+        myFollowingList =
+            dataController!.userDocumentSnapshot!.get('following');
+      } catch (e) {
+        myFollowingList = [];
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -248,7 +327,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       isNotEditAble
                           ? Text(
                               locationController.text == ''
-                                  ? 'Add your location'
+                                  ? widget.isOtherUser!
+                                      ? 'No location found'
+                                      : 'Add your location'
                                   : locationController.text,
                               style: const TextStyle(
                                 color: Color(0xFF918F8F),
@@ -278,7 +359,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       isNotEditAble
                           ? Text(
                               descriptionController.text == ''
-                                  ? 'Add your description'
+                                  ? widget.isOtherUser!
+                                      ? 'No description found'
+                                      : 'Add your description'
                                   : descriptionController.text,
                               style: const TextStyle(
                                 letterSpacing: -0.3,
@@ -365,18 +448,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             MaterialButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                if (widget.isOtherUser!) {
+                                  followUser(
+                                    myFollowingList,
+                                    widget.userSnapshot!,
+                                  );
+                                }
+                              },
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              color: AppColors.activeColor,
-                              child: const Text(
-                                'Follow',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: -0.3),
+                              color: widget.isOtherUser!
+                                  ? userFollowerList.contains(FirebaseAuth
+                                          .instance.currentUser!.uid)
+                                      ? AppColors.activeColor.withOpacity(0.5)
+                                      : AppColors.activeColor
+                                  : Colors.grey,
+                              child: Text(
+                                widget.isOtherUser!
+                                    ? userFollowerList.contains(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        ? 'Unfollow'
+                                        : 'Follow'
+                                    : 'Followed',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -0.3,
+                                ),
                               ),
                             )
                           ],
@@ -386,44 +487,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 105, right: 35),
-                  child: InkWell(
-                    onTap: () {
-                      if (!isNotEditAble && formKey.currentState!.validate()) {
-                        dataController!.updateUserProfileDataInFireStore(
-                          nameController.text,
-                          locationController.text,
-                          descriptionController.text,
-                        );
+              widget.isOtherUser!
+                  ? const SizedBox()
+                  : Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 105, right: 35),
+                        child: InkWell(
+                          onTap: () {
+                            if (!isNotEditAble &&
+                                formKey.currentState!.validate()) {
+                              dataController!.updateUserProfileDataInFireStore(
+                                nameController.text,
+                                locationController.text,
+                                descriptionController.text,
+                              );
 
-                        setState(() {
-                          isNotEditAble = true;
-                        });
-                      } else {
-                        setState(() {
-                          isNotEditAble = false;
-                        });
-                      }
-                    },
-                    child: isNotEditAble
-                        ? const Icon(
-                            Icons.edit,
-                            color: Colors.grey,
-                          )
-                        : const Icon(
-                            Icons.check,
-                            color: Colors.black87,
-                          ),
-                  ),
-                ),
-              ),
+                              setState(() {
+                                isNotEditAble = true;
+                              });
+                            } else {
+                              setState(() {
+                                isNotEditAble = false;
+                              });
+                            }
+                          },
+                          child: isNotEditAble
+                              ? const Icon(
+                                  Icons.edit,
+                                  color: Colors.grey,
+                                )
+                              : const Icon(
+                                  Icons.check,
+                                  color: Colors.black87,
+                                ),
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+followUser(List myFollowingList, DocumentSnapshot userData) {
+  if (myFollowingList.contains(userData.id)) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      'following': FieldValue.arrayRemove([userData.id]),
+    }, SetOptions(merge: true));
+
+    FirebaseFirestore.instance.collection('users').doc(userData.id).set({
+      'followers':
+          FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+    }, SetOptions(merge: true));
+
+    myFollowingList.remove(userData.id);
+  } else {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      'following': FieldValue.arrayUnion([userData.id]),
+    }, SetOptions(merge: true));
+
+    FirebaseFirestore.instance.collection('users').doc(userData.id).set({
+      'followers':
+          FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+    }, SetOptions(merge: true));
+
+    myFollowingList.add(userData.id);
   }
 }

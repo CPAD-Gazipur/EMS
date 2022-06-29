@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/views/checkout/checkout_screen.dart';
+import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -42,7 +43,7 @@ class _EventPageViewState extends State<EventPageView> {
 
   @override
   Widget build(BuildContext context) {
-    analytics.setCurrentScreen(screenName: 'EventView Screen');
+    analytics.setCurrentScreen(screenName: 'EventViewScreen');
 
     bool isJoin = dataController.joinedEvents.contains(widget.eventData);
 
@@ -93,7 +94,7 @@ class _EventPageViewState extends State<EventPageView> {
 
     tagCollectively = '';
     for (String element in tags) {
-      tagCollectively += '#${element.trim()} ';
+      tagCollectively += '#${element.trim().replaceAll(' ', '_')} ';
     }
 
     try {
@@ -169,23 +170,33 @@ class _EventPageViewState extends State<EventPageView> {
               ),
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 24,
-                    child: CachedNetworkImage(
-                      imageUrl: profileImage,
-                      fit: BoxFit.contain,
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: imageProvider, fit: BoxFit.cover),
+                  InkWell(
+                    onTap: () {
+                      Get.to(
+                        () => ProfileScreen(
+                          userSnapshot: widget.user,
+                          isOtherUser: true,
                         ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 24,
+                      child: CachedNetworkImage(
+                        imageUrl: profileImage,
+                        fit: BoxFit.contain,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: imageProvider, fit: BoxFit.cover),
+                          ),
+                        ),
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
-                      placeholder: (context, url) => const Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
                     ),
                   ),
                   const SizedBox(
