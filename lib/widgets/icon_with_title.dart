@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 Widget iconWithTitle({
   required String text,
-  Function? function,
+  Function? onBackIconPress,
   bool isShow = true,
 }) {
   return Row(
@@ -12,23 +12,24 @@ Widget iconWithTitle({
           ? Container()
           : Expanded(
               flex: 0,
-              child: InkWell(
-                onTap: () {
-                  function!();
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: Get.width * 0.02,
-                    top: Get.height * 0.06,
-                    bottom: Get.height * 0.02,
+              child: Container(
+                margin: EdgeInsets.only(
+                  left: Get.width * 0.02,
+                  top: Get.height * 0.06,
+                  bottom: Get.height * 0.02,
+                ),
+                width: 30,
+                height: 30,
+                /*decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/back_button.png'),
                   ),
-                  width: 30,
-                  height: 30,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/back_button.png'),
-                    ),
-                  ),
+                ),*/
+                child: InkWell(
+                  onTap: () {
+                    onBackIconPress!;
+                  },
+                  child: Image.asset('assets/images/back_button.png'),
                 ),
               ),
             ),

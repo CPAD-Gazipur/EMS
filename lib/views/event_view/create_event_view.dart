@@ -67,7 +67,7 @@ class _CreateEventViewState extends State<CreateEventView> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                iconWithTitle(text: 'Create Event'),
+                iconWithTitle(text: 'Create Event', onBackIconPress: () {}),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),

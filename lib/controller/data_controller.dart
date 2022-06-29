@@ -19,6 +19,7 @@ class DataController extends GetxController {
 
   var allUsers = <DocumentSnapshot>[].obs;
   var allEvents = <DocumentSnapshot>[].obs;
+  var filterEvents = <DocumentSnapshot>[].obs;
   var joinedEvents = <DocumentSnapshot>[].obs;
 
   var isEventLoading = false.obs;
@@ -103,7 +104,10 @@ class DataController extends GetxController {
   }
 
   updateUserProfileDataInFireStore(
-      String name, String location, String description) {
+    String name,
+    String location,
+    String description,
+  ) {
     FirebaseFirestore.instance
         .collection('users')
         .doc(auth.currentUser!.uid)
@@ -136,6 +140,7 @@ class DataController extends GetxController {
 
     FirebaseFirestore.instance.collection('events').snapshots().listen((event) {
       allEvents.assignAll(event.docs);
+      filterEvents.assignAll(event.docs);
 
       joinedEvents.value = allEvents.where((element) {
         List joinedIDs = element.get('event_joined');

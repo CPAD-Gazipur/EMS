@@ -330,6 +330,14 @@ class _EventPageViewState extends State<EventPageView> {
                         image: imageProvider,
                         fit: BoxFit.cover,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
                     ),
                   ),
                   placeholder: (context, url) => SizedBox(
@@ -500,6 +508,7 @@ class _EventPageViewState extends State<EventPageView> {
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
+                        color: Colors.blue,
                       ),
                     ),
                   ),
