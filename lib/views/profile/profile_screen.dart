@@ -252,38 +252,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(70),
                                 ),
-                                child: profileImage.isEmpty
-                                    ? const CircleAvatar(
-                                        radius: 56,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: AssetImage(
-                                            'assets/images/event.jpg'),
-                                      )
-                                    : CircleAvatar(
-                                        radius: 56,
-                                        backgroundColor: Colors.white,
-                                        child: CachedNetworkImage(
-                                          imageUrl: profileImage,
-                                          fit: BoxFit.contain,
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover),
-                                            ),
-                                          ),
-                                          placeholder: (context, url) =>
-                                              const Center(
-                                            child: CircularProgressIndicator
-                                                .adaptive(),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(Icons.error),
-                                        ),
+                                child: CircleAvatar(
+                                  radius: 56,
+                                  backgroundColor: Colors.white,
+                                  child: CachedNetworkImage(
+                                    imageUrl: profileImage,
+                                    fit: BoxFit.contain,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
                                       ),
+                                    ),
+                                    placeholder: (context, url) => const Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(
+                                      Icons.person,
+                                      size: 56,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -294,7 +288,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       isNotEditAble
                           ? Text(
-                              nameController.text,
+                              nameController.text.isEmpty
+                                  ? 'Anonymous User'
+                                  : nameController.text,
                               style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: 18,
