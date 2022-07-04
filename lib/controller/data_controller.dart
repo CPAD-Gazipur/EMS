@@ -18,6 +18,7 @@ class DataController extends GetxController {
   DocumentSnapshot? userDocumentSnapshot;
 
   var allUsers = <DocumentSnapshot>[].obs;
+  var filterUsers = <DocumentSnapshot>[].obs;
   var allEvents = <DocumentSnapshot>[].obs;
   var filterEvents = <DocumentSnapshot>[].obs;
   var joinedEvents = <DocumentSnapshot>[].obs;
@@ -131,6 +132,7 @@ class DataController extends GetxController {
     isUserLoading(true);
     FirebaseFirestore.instance.collection('users').snapshots().listen((event) {
       allUsers.value = event.docs;
+      filterUsers.value.assignAll(allUsers);
       isUserLoading(false);
     });
   }

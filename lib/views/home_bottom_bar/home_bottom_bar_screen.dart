@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/service/notification/local_push_notification.dart';
-import 'package:ems/views/chat/chat_view.dart';
+import 'package:ems/views/chat/chatting_view.dart';
 import 'package:ems/views/community/comunity_screen.dart';
 import 'package:ems/views/event_view/event_page_view.dart';
 import 'package:ems/views/home/home_screen.dart';
@@ -191,7 +191,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     const HomeScreen(),
     CommunityScreen(),
     const CreateEventView(),
-    const ChatScreen(),
+    ChattingView(),
     const ProfileScreen(),
   ];
 }
