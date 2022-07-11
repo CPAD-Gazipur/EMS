@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/service/notification/send_local_notification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,7 @@ class DataController extends GetxController {
 
   var isEventLoading = false.obs;
   var isUserLoading = false.obs;
+  var isMessageSending = false.obs;
 
   Future<String> uploadImageToFirebase(File file) async {
     isCreatingEvent(true);
@@ -210,6 +212,28 @@ class DataController extends GetxController {
               'You have subscribed this event. You will get future update about this event.',
           token: token!);
     }
+  }
+
+  sendMessageToFirebase({
+    Map<String, dynamic>? data,
+    String? lastMessage,
+    String? groupID,
+  }) async {
+    isMessageSending(true);
+
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(groupID)
+        .collection('chatroom')
+        .add(data!);
+
+    await FirebaseFirestore.instance.collection('chats').doc(groupID).set({
+      'lastMessage': lastMessage,
+      'groupID': groupID,
+      'group': groupID!.split('-'),
+    }, SetOptions(merge: true));
+
+    isMessageSending(false);
   }
 
   @override

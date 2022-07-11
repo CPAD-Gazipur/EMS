@@ -54,7 +54,7 @@ class OnBoardingScreen extends StatelessWidget {
               child: Image.asset(
                 'assets/images/event.jpg',
                 fit: BoxFit.cover,
-                height: kIsWeb ? 450 : null,
+                height: kIsWeb ? 450 : 180,
               ),
             ),
             const SizedBox(
