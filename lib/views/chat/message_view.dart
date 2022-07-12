@@ -32,6 +32,7 @@ class MessageView extends StatefulWidget {
 class _MessageViewState extends State<MessageView> {
   bool isSendingMessage = false;
   bool isEmojiPickerOpen = false;
+
   String myUID = '';
   var screenHeight;
   var screenWidth;
@@ -105,7 +106,9 @@ class _MessageViewState extends State<MessageView> {
                           if (messageUserID == myUID) {
                             switch (messageType) {
                               case 'iSentText':
-                                messageWidget = textMessageISent(data[index]);
+                                messageWidget = textMessageISent(
+                                  doc: data[index],
+                                );
                                 break;
                             }
                           } else {
@@ -185,8 +188,8 @@ class _MessageViewState extends State<MessageView> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: Get.width * 0.13,
+                      const SizedBox(
+                        width: 10,
                       ),
                       Row(
                         children: [
@@ -306,23 +309,27 @@ class _MessageViewState extends State<MessageView> {
     );
   }
 
-  textMessageISent(DocumentSnapshot doc) {
-    String message = doc.get('message');
+  textMessageISent({
+    DocumentSnapshot? doc,
+  }) {
+    String message = doc!.get('message');
 
     Timestamp time = doc.get('timeStamp') as Timestamp;
     DateTime dateTime = time.toDate();
     String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
             margin: const EdgeInsets.only(
-              right: 20,
+              right: 10,
+              left: 40,
             ),
-            width: screenWidth * 0.38,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(18),
@@ -330,7 +337,7 @@ class _MessageViewState extends State<MessageView> {
                 topRight: Radius.zero,
                 topLeft: Radius.circular(18),
               ),
-              color: Colors.black,
+              color: Colors.blue,
             ),
             child: Padding(
               padding: const EdgeInsets.all(15),
@@ -345,7 +352,7 @@ class _MessageViewState extends State<MessageView> {
           ),
           Container(
             margin: const EdgeInsets.only(
-              right: 32,
+              right: 25,
               top: 3,
             ),
             child: Text(
@@ -369,15 +376,17 @@ class _MessageViewState extends State<MessageView> {
     String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             margin: const EdgeInsets.only(
-              left: 20,
+              left: 10,
+              right: 40,
             ),
-            width: screenWidth * 0.38,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 bottomRight: Radius.circular(18),
@@ -400,7 +409,7 @@ class _MessageViewState extends State<MessageView> {
           ),
           Container(
             margin: const EdgeInsets.only(
-              left: 32,
+              left: 25,
               top: 3,
             ),
             child: Text(
