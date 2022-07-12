@@ -449,7 +449,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onPressed: () {
                                   if (widget.isOtherUser!) {
                                     followUser(
-                                      nameController.text,
                                       myFollowingList,
                                       widget.userSnapshot!,
                                     );
@@ -529,7 +528,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-followUser(String name, List myFollowingList, DocumentSnapshot userData) {
+followUser(List myFollowingList, DocumentSnapshot userData) {
+  String myUserName;
+  DataController dataController = Get.find<DataController>();
+
+  try {
+    myUserName = dataController.userDocumentSnapshot!.get('name');
+  } catch (e) {
+    myUserName = 'Anonymous user';
+  }
+
   if (myFollowingList.contains(userData.id)) {
     FirebaseFirestore.instance
         .collection('users')
@@ -542,6 +550,12 @@ followUser(String name, List myFollowingList, DocumentSnapshot userData) {
       'followers':
           FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
     }, SetOptions(merge: true));
+
+    sendNotification(
+      title: 'EMS- Event Management System',
+      body: '$myUserName unfollowing you.',
+      token: userData.get('token'),
+    );
 
     myFollowingList.remove(userData.id);
   } else {
@@ -558,8 +572,8 @@ followUser(String name, List myFollowingList, DocumentSnapshot userData) {
     }, SetOptions(merge: true));
 
     sendNotification(
-      title: 'Following...',
-      body: '$name start following you.',
+      title: 'EMS- Event Management System',
+      body: '$myUserName start following you.',
       token: userData.get('token'),
     );
 
