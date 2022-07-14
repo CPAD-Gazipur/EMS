@@ -127,6 +127,7 @@ class _MessageViewState extends State<MessageView> {
                         .collection('chats')
                         .doc(widget.groupID)
                         .collection('chatroom')
+                        .orderBy('timeStamp', descending: false)
                         .snapshots(),
                   ),
           ),
@@ -525,7 +526,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 height: 1,
               ),
               Text(
-                address,
+                address.isEmpty ? 'No address found' : address,
                 maxLines: 1,
                 style: const TextStyle(
                   fontWeight: FontWeight.w400,
