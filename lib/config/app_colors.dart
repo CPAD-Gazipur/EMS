@@ -6,6 +6,9 @@ class AppColors {
   static const Color loginBackgroundColor = Color(0xFFECF3F9);
   static const Color containerShadow = Color(0xffE1E9FD);
 
+  static Color white2 = const Color(0xffEEEEEE);
+  static Color whiteGrey = const Color(0xffC3C2C2);
+
   static const Color facebookColor = Color(0xFF295396);
   static const Color googleColor = Color(0xFF3D66AF);
 

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/chat/message_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -115,7 +116,13 @@ class _ChattingViewState extends State<ChattingView> {
                     scrollDirection: Axis.vertical,
                     itemCount: dataController.filterUsers.length,
                     itemBuilder: (context, index) {
-                      String name, profileImageUrl, lastMessage;
+                      String name, profileImageUrl, lastMessage, myUid;
+
+                      try {
+                        myUid = FirebaseAuth.instance.currentUser!.uid;
+                      } catch (_) {
+                        myUid = '';
+                      }
 
                       try {
                         name = dataController.filterUsers[index].get('name');
@@ -150,7 +157,29 @@ class _ChattingViewState extends State<ChattingView> {
                                 color: Colors.white,
                               ),
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  String chatRoomID = '';
+
+                                  if (myUid.hashCode >
+                                      dataController
+                                          .filterUsers[index].id.hashCode) {
+                                    chatRoomID =
+                                        '$myUid-${dataController.filterUsers[index].id}';
+                                  } else {
+                                    chatRoomID =
+                                        '${dataController.filterUsers[index].id}-$myUid';
+                                  }
+
+                                  Get.to(
+                                    () => MessageView(
+                                      name: name,
+                                      image: profileImageUrl,
+                                      groupID: chatRoomID,
+                                      userDoc:
+                                          dataController.filterUsers[index],
+                                    ),
+                                  );
+                                },
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 8),
