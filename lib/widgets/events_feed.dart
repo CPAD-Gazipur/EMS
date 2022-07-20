@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../controller/controller.dart';
 import '../views/view.dart';
@@ -251,16 +252,24 @@ class EventFeeds extends StatelessWidget {
                   placeholder: (context, url) => SizedBox(
                     width: double.infinity,
                     height: Get.width * 0.5,
-                    child: const Center(
-                      child: CircularProgressIndicator.adaptive(
-                        strokeWidth: 2,
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey,
+                      highlightColor: Colors.white,
+                      direction: ShimmerDirection.ltr,
+                      child: Image.asset(
+                        'assets/images/placeholder-image.png',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   errorWidget: (context, url, error) => SizedBox(
-                      width: double.infinity,
-                      height: Get.width * 0.5,
-                      child: const Center(child: Icon(Icons.error))),
+                    width: double.infinity,
+                    height: Get.width * 0.5,
+                    child: Image.asset(
+                      'assets/images/placeholder-image.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),

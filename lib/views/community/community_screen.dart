@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../config/config.dart';
 import '../../controller/controller.dart';
@@ -287,21 +288,27 @@ class CommunityScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                placeholder: (context, url) => const SizedBox(
+                                placeholder: (context, url) => SizedBox(
                                   width: double.infinity,
                                   height: 100,
-                                  child: Center(
-                                    child: CircularProgressIndicator.adaptive(
-                                      strokeWidth: 2,
+                                  child: Shimmer.fromColors(
+                                    baseColor: Colors.grey,
+                                    highlightColor: Colors.white,
+                                    direction: ShimmerDirection.ltr,
+                                    child: Image.asset(
+                                      'assets/images/placeholder-image.png',
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    const SizedBox(
-                                        width: double.infinity,
-                                        height: 100,
-                                        child:
-                                            Center(child: Icon(Icons.error))),
+                                errorWidget: (context, url, error) => SizedBox(
+                                  width: double.infinity,
+                                  height: 100,
+                                  child: Image.asset(
+                                    'assets/images/placeholder-image.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

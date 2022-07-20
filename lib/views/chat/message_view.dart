@@ -5,13 +5,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../config/config.dart';
 import '../../controller/controller.dart';
 import '../view.dart';
 
+// ignore: must_be_immutable
 class MessageView extends StatefulWidget {
   String? image, name, groupID, fcmToken;
   DocumentSnapshot userDoc;
@@ -33,8 +39,12 @@ class _MessageViewState extends State<MessageView> {
   bool isSendingMessage = false;
   bool isEmojiPickerOpen = false;
 
+  File? profileImage;
+
   String myUID = '';
+  // ignore: prefer_typing_uninitialized_variables
   var screenHeight;
+  // ignore: prefer_typing_uninitialized_variables
   var screenWidth;
 
   DataController? dataController;
@@ -80,56 +90,68 @@ class _MessageViewState extends State<MessageView> {
       body: Column(
         children: [
           Expanded(
-            child: dataController!.isMessageSending.value
-                ? const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  )
-                : StreamBuilder<QuerySnapshot>(
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator.adaptive(),
+            child: Obx(
+              () => dataController!.isMessageSending.value
+                  ? const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    )
+                  : StreamBuilder<QuerySnapshot>(
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          );
+                        }
+
+                        List<DocumentSnapshot> data =
+                            snapshot.data!.docs.reversed.toList();
+
+                        return ListView.builder(
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            String messageUserID = data[index].get('uID');
+                            String messageType = data[index].get('type');
+
+                            Widget messageWidget = Container();
+
+                            if (messageUserID == myUID) {
+                              switch (messageType) {
+                                case 'iSentText':
+                                  messageWidget =
+                                      textMessageISent(doc: data[index]);
+                                  break;
+                                case 'iSentImage':
+                                  messageWidget = imageMessageISent(
+                                    doc: data[index],
+                                    groupID: widget.groupID,
+                                  );
+                                  break;
+                              }
+                            } else {
+                              switch (messageType) {
+                                case 'iSentText':
+                                  messageWidget =
+                                      textMessageIGot(doc: data[index]);
+                                  break;
+                                case 'iSentImage':
+                                  messageWidget =
+                                      imageMessageIGot(doc: data[index]);
+                                  break;
+                              }
+                            }
+                            return messageWidget;
+                          },
+                          itemCount: data.length,
                         );
-                      }
-
-                      List<DocumentSnapshot> data =
-                          snapshot.data!.docs.reversed.toList();
-
-                      return ListView.builder(
-                        reverse: true,
-                        itemBuilder: (context, index) {
-                          String messageUserID = data[index].get('uID');
-                          String messageType = data[index].get('type');
-
-                          Widget messageWidget = Container();
-
-                          if (messageUserID == myUID) {
-                            switch (messageType) {
-                              case 'iSentText':
-                                messageWidget = textMessageISent(
-                                  doc: data[index],
-                                );
-                                break;
-                            }
-                          } else {
-                            switch (messageType) {
-                              case 'iSentText':
-                                messageWidget = textMessageIGot(data[index]);
-                                break;
-                            }
-                          }
-                          return messageWidget;
-                        },
-                        itemCount: data.length,
-                      );
-                    },
-                    stream: FirebaseFirestore.instance
-                        .collection('chats')
-                        .doc(widget.groupID)
-                        .collection('chatroom')
-                        .orderBy('timeStamp', descending: false)
-                        .snapshots(),
-                  ),
+                      },
+                      stream: FirebaseFirestore.instance
+                          .collection('chats')
+                          .doc(widget.groupID)
+                          .collection('chatroom')
+                          .orderBy('timeStamp', descending: false)
+                          .snapshots(),
+                    ),
+            ),
           ),
           Container(
             height: isEmojiPickerOpen ? 300 : 75,
@@ -167,8 +189,9 @@ class _MessageViewState extends State<MessageView> {
                             isEmojiPickerOpen = !isEmojiPickerOpen;
                           });
                         },
-                        child: const Icon(
+                        child: Icon(
                           Icons.tag_faces_outlined,
+                          color: isEmojiPickerOpen ? Colors.blue : null,
                         ),
                       ),
                       const SizedBox(
@@ -205,17 +228,112 @@ class _MessageViewState extends State<MessageView> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: [
-                                        InkWell(
-                                          onTap: () {},
-                                          child: const Icon(Icons.camera_alt),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.camera_alt,
+                                            semanticLabel: 'Camera',
+                                          ),
+                                          onPressed: () async {
+                                            final ImagePicker picker =
+                                                ImagePicker();
+                                            final XFile? image =
+                                                await picker.pickImage(
+                                                    source: ImageSource.camera);
+
+                                            if (image != null) {
+                                              dataController!
+                                                  .isMessageSending(true);
+
+                                              File compressedFile =
+                                                  await FlutterNativeImage
+                                                      .compressImage(
+                                                image.path,
+                                                quality: 50,
+                                              );
+
+                                              Get.back();
+
+                                              String imageUrl =
+                                                  await dataController!
+                                                      .uploadImageToFirebase(
+                                                compressedFile,
+                                                isSendMessage: true,
+                                              );
+
+                                              Map<String, dynamic> data = {
+                                                'type': 'iSentImage',
+                                                'message': imageUrl,
+                                                'timeStamp': DateTime.now(),
+                                                'uID': myUID,
+                                              };
+
+                                              dataController!
+                                                  .sendMessageToFirebase(
+                                                data: data,
+                                                groupID: widget.groupID,
+                                                lastMessage: 'Image',
+                                              );
+
+                                              dataController!
+                                                  .isMessageSending(false);
+                                            }
+                                          },
                                         ),
                                         const SizedBox(
                                           width: 20,
                                         ),
-                                        InkWell(
-                                          onTap: () {},
-                                          child: const Icon(Icons
-                                              .photo_size_select_actual_outlined),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons
+                                                .photo_size_select_actual_outlined,
+                                            semanticLabel: 'Gallery',
+                                          ),
+                                          onPressed: () async {
+                                            final ImagePicker picker =
+                                                ImagePicker();
+                                            final XFile? image =
+                                                await picker.pickImage(
+                                              source: ImageSource.gallery,
+                                            );
+
+                                            if (image != null) {
+                                              dataController!
+                                                  .isMessageSending(true);
+
+                                              File compressedFile =
+                                                  await FlutterNativeImage
+                                                      .compressImage(
+                                                image.path,
+                                                quality: 50,
+                                              );
+
+                                              Get.back();
+
+                                              String imageUrl =
+                                                  await dataController!
+                                                      .uploadImageToFirebase(
+                                                compressedFile,
+                                                isSendMessage: true,
+                                              );
+
+                                              Map<String, dynamic> data = {
+                                                'type': 'iSentImage',
+                                                'message': imageUrl,
+                                                'timeStamp': DateTime.now(),
+                                                'uID': myUID,
+                                              };
+
+                                              dataController!
+                                                  .sendMessageToFirebase(
+                                                data: data,
+                                                groupID: widget.groupID,
+                                                lastMessage: 'Image',
+                                              );
+
+                                              dataController!
+                                                  .isMessageSending(false);
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),
@@ -229,9 +347,7 @@ class _MessageViewState extends State<MessageView> {
                               height: 20,
                             ),
                           ),
-                          SizedBox(
-                            width: screenWidth * 0.03,
-                          ),
+                          SizedBox(width: screenWidth * 0.03),
                           InkWell(
                             onTap: () {
                               if (messageController.text.isEmpty) {
@@ -260,9 +376,9 @@ class _MessageViewState extends State<MessageView> {
                               child: Image.asset(
                                   'assets/images/blackSendIcon.png'),
                             ),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -301,7 +417,7 @@ class _MessageViewState extends State<MessageView> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -310,11 +426,8 @@ class _MessageViewState extends State<MessageView> {
     );
   }
 
-  textMessageISent({
-    DocumentSnapshot? doc,
-  }) {
-    String message = doc!.get('message');
-
+  textMessageISent({required DocumentSnapshot doc}) {
+    String message = doc.get('message');
     Timestamp time = doc.get('timeStamp') as Timestamp;
     DateTime dateTime = time.toDate();
     String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
@@ -370,7 +483,7 @@ class _MessageViewState extends State<MessageView> {
     );
   }
 
-  textMessageIGot(DocumentSnapshot doc) {
+  textMessageIGot({required DocumentSnapshot doc}) {
     String message = doc.get('message');
     Timestamp time = doc.get('timeStamp') as Timestamp;
     DateTime dateTime = time.toDate();
@@ -425,6 +538,209 @@ class _MessageViewState extends State<MessageView> {
         ],
       ),
     );
+  }
+
+  imageMessageISent({required DocumentSnapshot doc, String? groupID}) {
+    String imageLink = doc.get('message');
+    Timestamp time = doc.get('timeStamp') as Timestamp;
+    DateTime dateTime = time.toDate();
+    String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            height: screenHeight * 0.18,
+            width: screenWidth * 0.42,
+            margin: const EdgeInsets.only(
+              right: 10,
+              left: 40,
+            ),
+            child: CachedNetworkImage(
+              imageUrl: imageLink,
+              fit: BoxFit.contain,
+              imageBuilder: (context, imageProvider) => FocusedMenuHolder(
+                onPressed: () {},
+                openWithTap: true,
+                animateMenuItems: true,
+                duration: const Duration(microseconds: 100),
+                menuOffset: 10.0,
+                bottomOffsetHeight: 10,
+                blurSize: 1,
+                menuWidth: MediaQuery.of(context).size.width / 2,
+                menuItems: [
+                  FocusedMenuItem(
+                    title: const Text(
+                      "Delete",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    trailingIcon: const Icon(
+                      Icons.delete_forever_outlined,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      onPressedClicked(
+                        doc: doc,
+                        groupID: groupID!,
+                        imagePath: imageLink,
+                      );
+                    },
+                  ),
+                ],
+                child: Container(
+                  height: screenHeight * 0.18,
+                  width: screenWidth * 0.42,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      bottomRight: Radius.circular(18),
+                      bottomLeft: Radius.circular(18),
+                      topRight: Radius.zero,
+                      topLeft: Radius.circular(18),
+                    ),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => SizedBox(
+                height: screenHeight * 0.18,
+                width: screenWidth * 0.42,
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey,
+                  highlightColor: Colors.white,
+                  direction: ShimmerDirection.ltr,
+                  child: Image.asset(
+                    'assets/images/placeholder-image.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => SizedBox(
+                height: screenHeight * 0.18,
+                width: screenWidth * 0.42,
+                child: Image.asset(
+                  'assets/images/placeholder-image.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              right: 25,
+              top: 3,
+            ),
+            child: Text(
+              timeString,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey.withOpacity(0.8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  imageMessageIGot({required DocumentSnapshot doc}) {
+    String imageLink = doc.get('message');
+
+    Timestamp time = doc.get('timeStamp') as Timestamp;
+    DateTime dateTime = time.toDate();
+    String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            height: screenHeight * 0.18,
+            width: screenWidth * 0.42,
+            margin: const EdgeInsets.only(
+              left: 10,
+              right: 40,
+            ),
+            child: CachedNetworkImage(
+              imageUrl: imageLink,
+              fit: BoxFit.contain,
+              imageBuilder: (context, imageProvider) => Container(
+                height: screenHeight * 0.18,
+                width: screenWidth * 0.42,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(18),
+                    topRight: Radius.circular(18),
+                    topLeft: Radius.zero,
+                  ),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => SizedBox(
+                height: screenHeight * 0.18,
+                width: screenWidth * 0.42,
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey,
+                  highlightColor: Colors.white,
+                  direction: ShimmerDirection.ltr,
+                  child: Image.asset(
+                    'assets/images/placeholder-image.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => SizedBox(
+                height: screenHeight * 0.18,
+                width: screenWidth * 0.42,
+                child: Image.asset(
+                  'assets/images/placeholder-image.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              left: 25,
+              top: 3,
+            ),
+            child: Text(
+              timeString,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey.withOpacity(0.8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  onPressedClicked({
+    required DocumentSnapshot doc,
+    required String groupID,
+    required String imagePath,
+  }) {
+    dataController!.deleteMessageFromFirebaseDatabase(doc, groupID, imagePath);
   }
 }
 
@@ -537,7 +853,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
         ),
-        const Spacer(),
       ],
     );
   }

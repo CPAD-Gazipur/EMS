@@ -29,7 +29,10 @@ class DataController extends GetxController {
   var isUserLoading = false.obs;
   var isMessageSending = false.obs;
 
-  Future<String> uploadImageToFirebase(File file) async {
+  Future<String> uploadImageToFirebase(
+    File file, {
+    bool isSendMessage = false,
+  }) async {
     isCreatingEvent(true);
 
     String imageUrl = '';
@@ -48,8 +51,11 @@ class DataController extends GetxController {
       Get.snackbar('Warning', error, colorText: Colors.blue);
     });
 
-    Get.snackbar('Success', 'Image Uploaded', colorText: Colors.blue);
-
+    if (isSendMessage) {
+      debugPrint('ImageLink: $imageUrl');
+    } else {
+      Get.snackbar('Success', 'Image Uploaded', colorText: Colors.blue);
+    }
     return imageUrl;
   }
 
@@ -238,6 +244,27 @@ class DataController extends GetxController {
     }, SetOptions(merge: true));
 
     isMessageSending(false);
+  }
+
+  deleteMessageFromFirebaseDatabase(
+    DocumentSnapshot doc,
+    String groupID,
+    String imagePath,
+  ) async {
+    await FirebaseStorage.instance
+        .refFromURL(imagePath)
+        .delete()
+        .then((value) => debugPrint('Image Deleted'))
+        .catchError((e) => debugPrint('Error: $e'));
+
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(groupID)
+        .collection('chatroom')
+        .doc(doc.id)
+        .delete()
+        .then((value) => debugPrint('Message Deleted'))
+        .catchError((e) => debugPrint('Error: $e'));
   }
 
   @override
