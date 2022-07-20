@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/service/notification/send_local_notification.dart';
+import 'package:ems/service/notification/send_fcm_notification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -193,8 +193,10 @@ class DataController extends GetxController {
         'subscribe_user_list':
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
       }, SetOptions(merge: true));
+
       FirebaseMessaging.instance.unsubscribeFromTopic(eventData.id);
-      sendNotification(
+
+      sendFCMNotification(
           title: 'Unsubscribed',
           body:
               'You have been unsubscribed from this event. You will not get any future notification about this event.',
@@ -206,7 +208,8 @@ class DataController extends GetxController {
       }, SetOptions(merge: true));
 
       FirebaseMessaging.instance.subscribeToTopic(eventData.id);
-      sendNotification(
+
+      sendFCMNotification(
           title: 'Subscribed',
           body:
               'You have subscribed this event. You will get future update about this event.',

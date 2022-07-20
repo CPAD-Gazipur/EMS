@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
-import 'package:ems/service/notification/send_local_notification.dart';
+import 'package:ems/service/notification/send_fcm_notification.dart';
 import 'package:ems/views/chat/chat_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -554,7 +554,7 @@ followUser(List myFollowingList, DocumentSnapshot userData) {
           FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
     }, SetOptions(merge: true));
 
-    sendNotification(
+    sendFCMNotification(
       title: 'EMS- Event Management System',
       body: '$myUserName unfollowing you.',
       token: userData.get('token'),
@@ -574,7 +574,7 @@ followUser(List myFollowingList, DocumentSnapshot userData) {
           FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
     }, SetOptions(merge: true));
 
-    sendNotification(
+    sendFCMNotification(
       title: 'EMS- Event Management System',
       body: '$myUserName start following you.',
       token: userData.get('token'),

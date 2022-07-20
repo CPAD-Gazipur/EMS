@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ems/config/app_credentials.dart';
 import 'package:ems/service/notification/local_push_notification.dart';
+import 'package:ems/service/storage/shared_preference_storage.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
-import '../../service/notification/send_local_notification.dart';
+import '../../service/notification/send_fcm_notification.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -20,12 +21,23 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   FirebaseDynamicLinks firebaseDynamicLinks = FirebaseDynamicLinks.instance;
+  String data = '';
 
   @override
   initState() {
     super.initState();
     LocalNotificationService.initialize(isSchedule: true);
     FirebaseMessaging.instance.subscribeToTopic('subscription');
+
+    getNotificationData();
+  }
+
+  getNotificationData() async {
+    try {
+      data = (await SharePreferenceStorage().getFCMData())!;
+    } catch (e) {
+      data = '';
+    }
   }
 
   sendNotificationToGroup(String title) async {
@@ -133,7 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: () async {
                 String? token = await FirebaseMessaging.instance.getToken();
                 debugPrint('TOKEN: $token');
-                sendNotification(
+                sendFCMNotification(
                   title: 'Check Notification',
                   body: 'Send Successfully',
                   token: token!,
@@ -172,10 +184,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
                 child: const Text('Crash App')),
             ElevatedButton(
-                onPressed: () {
-                  createDynamicLink('book');
-                },
-                child: const Text('Create Dynamic Link')),
+              onPressed: () {
+                createDynamicLink('book');
+              },
+              child: const Text('Create Dynamic Link'),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              data.isEmpty ? 'Nothing' : data,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            )
           ],
         ),
       ),

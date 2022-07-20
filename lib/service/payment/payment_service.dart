@@ -11,7 +11,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../notification/send_local_notification.dart';
+import '../notification/send_fcm_notification.dart';
 
 Map<String, dynamic>? paymentIntentData;
 
@@ -91,7 +91,7 @@ void displayPaymentSheet(
         );
 
     String? token = await FirebaseMessaging.instance.getToken();
-    sendNotification(
+    sendFCMNotification(
       title: 'Payment Successful',
       body: 'You have successful purchases a new event',
       token: token!,

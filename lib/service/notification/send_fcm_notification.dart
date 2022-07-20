@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../../config/app_credentials.dart';
 
-sendNotification({
+sendFCMNotification({
   required String title,
   required String body,
   required String token,
@@ -15,6 +15,7 @@ sendNotification({
     'id': '1',
     'status': 'done',
     'message': title,
+    'route': 'home_screen'
   };
 
   try {
@@ -36,7 +37,7 @@ sendNotification({
     );
 
     if (response.statusCode == 200) {
-      debugPrint('Notification send');
+      debugPrint('FCM Notification Send');
     }
   } catch (e) {
     debugPrint('Notification Error: $e');

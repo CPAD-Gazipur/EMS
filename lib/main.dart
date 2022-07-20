@@ -20,6 +20,9 @@ void main() async {
   await Firebase.initializeApp();
   LocalNotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessages);
+  FirebaseMessaging.instance
+      .getInitialMessage()
+      .then((value) => _handleBackgroundMessages);
 
   if (kDebugMode) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
@@ -59,10 +62,18 @@ class MyApp extends StatelessWidget {
 
 Future<void> _handleBackgroundMessages(RemoteMessage message) async {
   // Handle background task here
-  await Firebase.initializeApp();
 
+  if (message.messageId != '') {
+    debugPrint(
+        "Have received a background message! Will have to grab the message from here somehow if the user didn't interact with the system tray message link");
+    SharePreferenceStorage().saveFCMData('GOT NOTIFICATION');
+    debugPrint('Notification: ${message.notification?.title}');
+    debugPrint('Notification: ${message.notification?.body}');
+  }
   // ignore: prefer_typing_uninitialized_variables
   var keys, values;
+
+  debugPrint('Notification: ${message.data}');
 
   message.data.forEach((key, value) {
     keys = key;

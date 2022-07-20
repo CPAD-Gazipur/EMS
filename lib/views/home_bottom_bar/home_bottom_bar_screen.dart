@@ -6,13 +6,14 @@ import 'package:ems/views/community/comunity_screen.dart';
 import 'package:ems/views/event_view/event_page_view.dart';
 import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/profile/profile_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../event_view/create_event_view.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
 class HomeBottomBarScreen extends StatefulWidget {
   const HomeBottomBarScreen({Key? key}) : super(key: key);
@@ -77,13 +78,35 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
 
   void listenNotifications() {
     LocalNotificationService.onNotifications.stream.listen((event) {
-      /*Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const OnBoardingScreen(),
-        ),
-      );*/
-      debugPrint(event);
+      if (event == 'home_screen') {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const HomeScreen(),
+          ),
+        );
+      }
+      debugPrint('Notification Clicked: $event');
     });
+  }
+
+  Future<void> _initiateInteractedMessage() async {
+    RemoteMessage? message =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      _handleNotificationInstruction(message);
+    }
+    // When app is in background (Stream listener)
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationInstruction);
+  }
+
+  void _handleNotificationInstruction(RemoteMessage message) {
+    //Create popup to display message info (works)
+    LocalNotificationService.display(message);
+
+    if (message.messageId != null) {
+      debugPrint('Notification: ${message.notification?.title}');
+      debugPrint('Notification: ${message.notification?.body}');
+    }
   }
 
   @override
@@ -91,14 +114,15 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     super.initState();
     Get.put(DataController(), permanent: true);
     listenNotifications();
-    FirebaseMessaging.onMessage.listen((event) {
+    FirebaseMessaging.onMessage.listen((message) {
       //Received Firebase messages
-      LocalNotificationService.display(event);
+      _handleNotificationInstruction(message);
     });
+    _initiateInteractedMessage();
     storeNotificationToken();
     FirebaseMessaging.instance.subscribeToTopic('subscription');
     initializeDynamicLink();
-    analytics.setCurrentScreen(screenName: 'BottomBar Screen');
+    analytics.setCurrentScreen(screenName: 'BottomBarScreen');
   }
 
   @override
@@ -191,7 +215,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     const HomeScreen(),
     CommunityScreen(),
     const CreateEventView(),
-    ChattingView(),
+    const ChattingView(),
     const ProfileScreen(),
   ];
 }
