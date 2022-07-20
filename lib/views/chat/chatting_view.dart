@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
-import 'package:ems/views/chat/message_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../controller/controller.dart';
 import '../profile/profile_screen.dart';
+import '../view.dart';
 
 class ChattingView extends StatefulWidget {
   const ChattingView({Key? key}) : super(key: key);

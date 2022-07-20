@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/config/app_colors.dart';
-import 'package:ems/controller/data_controller.dart';
-import 'package:ems/service/notification/send_fcm_notification.dart';
-import 'package:ems/views/chat/chat_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../config/config.dart';
+import '../../controller/controller.dart';
+import '../../service/service.dart';
+import '../view.dart';
 
 class ProfileScreen extends StatefulWidget {
   final DocumentSnapshot? userSnapshot;

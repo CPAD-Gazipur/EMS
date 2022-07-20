@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:ems/config/app_credentials.dart';
-import 'package:ems/service/notification/local_push_notification.dart';
-import 'package:ems/service/storage/shared_preference_storage.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +7,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
-import '../../service/notification/send_fcm_notification.dart';
+import '../../config/config.dart';
+import '../../service/service.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);

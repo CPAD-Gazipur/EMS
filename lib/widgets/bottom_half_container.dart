@@ -1,7 +1,8 @@
-import 'package:ems/controller/auth_contoller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../config/app_colors.dart';
+import '../controller/controller.dart';
 
 Widget buildBottomHalfContainer({
   required bool showShadow,
@@ -41,9 +42,8 @@ Widget buildBottomHalfContainer({
             ? GestureDetector(
                 onTap: () {
                   if (!formKey.currentState!.validate()) {
-                    return ;
-                  }
-                  else{
+                    return;
+                  } else {
                     if (isSignupScreen) {
                       authController.signup(
                         email: emailController.text.trim(),
@@ -56,7 +56,6 @@ Widget buildBottomHalfContainer({
                       );
                     }
                   }
-
                 },
                 child: Container(
                   decoration: BoxDecoration(

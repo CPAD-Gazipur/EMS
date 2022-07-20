@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:ems/controller/auth_contoller.dart';
-import 'package:ems/widgets/text_field.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
@@ -9,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-import '../../config/app_colors.dart';
+import '../../config/config.dart';
+import '../../controller/controller.dart';
+import '../../widgets/widgets.dart';
 
 class CreateProfile extends StatefulWidget {
   const CreateProfile({Key? key}) : super(key: key);

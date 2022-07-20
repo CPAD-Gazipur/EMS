@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../../config/app_credentials.dart';
+import '../../config/config.dart';
 
 sendFCMNotification({
   required String title,

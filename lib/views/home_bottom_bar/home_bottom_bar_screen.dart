@@ -1,11 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
-import 'package:ems/service/notification/local_push_notification.dart';
-import 'package:ems/views/chat/chatting_view.dart';
-import 'package:ems/views/community/comunity_screen.dart';
-import 'package:ems/views/event_view/event_page_view.dart';
-import 'package:ems/views/home/home_screen.dart';
-import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -13,7 +6,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../controller/controller.dart';
+import '../../service/service.dart';
 import '../event_view/create_event_view.dart';
+import '../view.dart';
 
 class HomeBottomBarScreen extends StatefulWidget {
   const HomeBottomBarScreen({Key? key}) : super(key: key);

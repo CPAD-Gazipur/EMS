@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../controller/data_controller.dart';
-import 'widgets/custom_app_bar.dart';
-import 'widgets/event_i_join.dart';
-import 'widgets/events_feed.dart';
+import '../../controller/controller.dart';
+import '../../widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

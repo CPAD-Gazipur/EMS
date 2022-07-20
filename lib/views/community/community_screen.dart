@@ -1,14 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../config/app_colors.dart';
-import '../../widgets/icon_with_title.dart';
-import '../event_view/event_page_view.dart';
-import '../profile/profile_screen.dart';
+import '../../config/config.dart';
+import '../../controller/controller.dart';
+import '../../widgets/widgets.dart';
+import '../view.dart';
 
 class CommunityScreen extends StatelessWidget {
   CommunityScreen({Key? key}) : super(key: key);

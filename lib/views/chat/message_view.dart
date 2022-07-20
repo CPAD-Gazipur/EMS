@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:ems/controller/data_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../config/app_colors.dart';
-import '../profile/profile_screen.dart';
+import '../../config/config.dart';
+import '../../controller/controller.dart';
+import '../view.dart';
 
 class MessageView extends StatefulWidget {
   String? image, name, groupID, fcmToken;

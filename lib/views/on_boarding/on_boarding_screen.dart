@@ -1,11 +1,11 @@
-import 'package:ems/config/app_colors.dart';
-import 'package:ems/views/home_bottom_bar/home_bottom_bar_screen.dart';
-import 'package:ems/views/login_signup/login_signup_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../config/config.dart';
+import '../view.dart';
 
 class OnBoardingScreen extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;

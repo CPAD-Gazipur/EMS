@@ -1,5 +1,6 @@
-import 'package:ems/config/app_colors.dart';
 import 'package:flutter/material.dart';
+
+import '../config/config.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({Key? key}) : super(key: key);
@@ -7,7 +8,11 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 10,bottom: 10,right: 5,),
+      padding: const EdgeInsets.only(
+        top: 10,
+        bottom: 10,
+        right: 5,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -29,7 +34,9 @@ class CustomAppBar extends StatelessWidget {
                     color: Colors.black54,
                     size: 30,
                   )),
-              const SizedBox(width: 15,),
+              const SizedBox(
+                width: 15,
+              ),
               InkWell(
                   onTap: () {},
                   child: const Icon(
@@ -39,7 +46,6 @@ class CustomAppBar extends StatelessWidget {
                   )),
             ],
           ),
-
         ],
       ),
     );

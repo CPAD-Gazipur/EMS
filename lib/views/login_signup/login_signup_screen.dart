@@ -1,11 +1,10 @@
-import 'package:ems/config/app_colors.dart';
-import 'package:ems/controller/auth_contoller.dart';
-import 'package:ems/widgets/bottom_half_container.dart';
-import 'package:ems/widgets/social_button.dart';
-import 'package:ems/widgets/text_field.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../config/config.dart';
+import '../../controller/controller.dart';
+import '../../widgets/widgets.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);

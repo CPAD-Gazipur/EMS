@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:dotted_border/dotted_border.dart';
-import 'package:ems/controller/data_controller.dart';
-import 'package:ems/widgets/icon_with_title.dart';
-import 'package:ems/widgets/text_field.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +12,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-import '../../config/app_colors.dart';
-import '../../model/event_media_model.dart';
+import '../../config/config.dart';
+import '../../controller/controller.dart';
+import '../../model/model.dart';
+import '../../widgets/widgets.dart';
 
 class CreateEventView extends StatefulWidget {
   const CreateEventView({Key? key}) : super(key: key);

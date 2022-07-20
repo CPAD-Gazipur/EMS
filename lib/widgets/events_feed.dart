@@ -1,8 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
-import 'package:ems/views/event_view/event_page_view.dart';
-import 'package:ems/views/profile/profile_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -10,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../controller/controller.dart';
+import '../views/view.dart';
 
 class EventFeeds extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;

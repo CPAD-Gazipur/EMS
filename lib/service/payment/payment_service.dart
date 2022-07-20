@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/config/app_credentials.dart';
-import 'package:ems/views/success/success_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +9,9 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../notification/send_fcm_notification.dart';
+import '../../config/config.dart';
+import '../../views/view.dart';
+import '../service.dart';
 
 Map<String, dynamic>? paymentIntentData;
 
@@ -41,11 +41,8 @@ Future<void> makePayment(
       debugPrint('Payment Error: $e');
     });
 
-    displayPaymentSheet(
-      context,
-      eventID!,
-      totalTicket,
-    );
+    // ignore: use_build_context_synchronously
+    displayPaymentSheet(context, eventID!, totalTicket);
   } catch (e, s) {
     debugPrint('Exception: $e \n $s');
   }

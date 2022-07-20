@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/config/app_colors.dart';
-import 'package:ems/service/payment/payment_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../config/config.dart';
+import '../../service/service.dart';
 
 class CheckOutScreen extends StatefulWidget {
   final DocumentSnapshot eventData;

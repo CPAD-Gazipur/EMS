@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/config/app_colors.dart';
-import 'package:ems/controller/data_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../profile/profile_screen.dart';
+import '../../../config/config.dart';
+import '../../../controller/controller.dart';
 
 class EventIJoin extends StatelessWidget {
   const EventIJoin({Key? key}) : super(key: key);

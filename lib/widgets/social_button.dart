@@ -1,5 +1,6 @@
-import 'package:ems/controller/auth_contoller.dart';
 import 'package:flutter/material.dart';
+
+import '../controller/controller.dart';
 
 Widget buildSocialButton({
   required String title,
