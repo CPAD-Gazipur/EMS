@@ -124,57 +124,60 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              String? token = await FirebaseMessaging.instance.getToken();
-              sendNotification(
-                title: 'Check Notification',
-                body: 'Send Successfully',
-                token: token!,
-              );
-            },
-            child: const Text('Send Notification'),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                LocalNotificationService.displayScheduleNotification(
-                  title: 'Hello',
-                  body: 'This is schedule Notification',
-                  dateTime: DateTime.now().add(const Duration(seconds: 12)),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                String? token = await FirebaseMessaging.instance.getToken();
+                debugPrint('TOKEN: $token');
+                sendNotification(
+                  title: 'Check Notification',
+                  body: 'Send Successfully',
+                  token: token!,
                 );
+              },
+              child: const Text('Send Notification'),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  LocalNotificationService.displayScheduleNotification(
+                    title: 'Hello',
+                    body: 'This is schedule Notification',
+                    dateTime: DateTime.now().add(const Duration(seconds: 12)),
+                  );
 
-                Get.snackbar('Success', 'Schedule Notification in 12 Sec');
-              },
-              child: const Text('Send Schedule Notification')),
-          const SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                sendNotificationToGroup('Group Notification');
-              },
-              child: const Text('Send Group Notification')),
-          const SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                throw Exception();
-              },
-              child: const Text('Crash App')),
-          ElevatedButton(
-              onPressed: () {
-                createDynamicLink('book');
-              },
-              child: const Text('Create Dynamic Link')),
-        ],
+                  Get.snackbar('Success', 'Schedule Notification in 12 Sec');
+                },
+                child: const Text('Send Schedule Notification')),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  sendNotificationToGroup('Group Notification');
+                },
+                child: const Text('Send Group Notification')),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  throw Exception();
+                },
+                child: const Text('Crash App')),
+            ElevatedButton(
+                onPressed: () {
+                  createDynamicLink('book');
+                },
+                child: const Text('Create Dynamic Link')),
+          ],
+        ),
       ),
     );
   }

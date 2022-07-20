@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/config/app_colors.dart';
 import 'package:ems/controller/data_controller.dart';
 import 'package:ems/service/notification/send_local_notification.dart';
+import 'package:ems/views/chat/chat_view.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -180,7 +181,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => ChatScreen());
+                          },
                           child: const Icon(
                             Icons.sms_rounded,
                             color: Colors.grey,

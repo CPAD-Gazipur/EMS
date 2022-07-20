@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 
 import '../../config/app_credentials.dart';
 
-sendNotification(
-    {required String title,
-    required String body,
-    required String token}) async {
+sendNotification({
+  required String title,
+  required String body,
+  required String token,
+}) async {
   final data = {
     'click_action': 'FLUTTER_NOTIFICATION_CLICK',
     'id': '1',

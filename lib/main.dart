@@ -6,11 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+
+import 'service/storage/shared_preference_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,4 +59,22 @@ class MyApp extends StatelessWidget {
 
 Future<void> _handleBackgroundMessages(RemoteMessage message) async {
   // Handle background task here
+  await Firebase.initializeApp();
+
+  // ignore: prefer_typing_uninitialized_variables
+  var keys, values;
+
+  message.data.forEach((key, value) {
+    keys = key;
+    values = value;
+    debugPrint("Key: $key---- Value: $value");
+    SharePreferenceStorage().saveFCMKey(keys);
+    SharePreferenceStorage().saveFCMData(values);
+  });
+
+  if (keys != null && values != null) {
+    debugPrint("Key: $keys---- Value: $values");
+    SharePreferenceStorage().saveFCMKey(keys);
+    SharePreferenceStorage().saveFCMData(values);
+  }
 }
