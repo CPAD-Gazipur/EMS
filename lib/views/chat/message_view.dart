@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:ems/widgets/chat_no_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +17,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../config/config.dart';
 import '../../controller/controller.dart';
+import '../../widgets/widgets.dart';
 import '../view.dart';
 
 // ignore: must_be_immutable
@@ -39,6 +41,7 @@ class MessageView extends StatefulWidget {
 class _MessageViewState extends State<MessageView> {
   bool isSendingMessage = false;
   bool isEmojiPickerOpen = false;
+  bool isSendMessage = false;
 
   File? profileImage;
 
@@ -103,91 +106,30 @@ class _MessageViewState extends State<MessageView> {
                     )
                   : StreamBuilder<QuerySnapshot>(
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
+                        if (!snapshot.hasData && !isSendMessage) {
+                          return const ChatShimmerEffect();
+                        } else if (snapshot.hasData) {
                           List<DocumentSnapshot> data =
                               snapshot.data!.docs.reversed.toList();
-
                           if (data.isEmpty) {
-                            List<String> greetingImageList = [
-                              'assets/gif/hello.gif',
-                              'assets/gif/hello1.gif',
-                              'assets/gif/hello2.gif',
-                              'assets/gif/hello3.gif',
-                              'assets/gif/hello4.gif',
-                              'assets/gif/hello5.gif',
-                            ];
+                            return ChatNoMessage(onSendMessage: () {
+                              Map<String, dynamic> data = {
+                                'type': 'iSentText',
+                                'message': 'Hi',
+                                'timeStamp': DateTime.now(),
+                                'uID': myUID,
+                              };
 
-                            greetingImageList.shuffle();
+                              dataController!.sendMessageToFirebase(
+                                data: data,
+                                groupID: widget.groupID,
+                                lastMessage: 'Hi',
+                              );
 
-                            String greetingImage = greetingImageList[0];
-
-                            return Center(
-                              child: InkWell(
-                                onTap: () {
-                                  Map<String, dynamic> data = {
-                                    'type': 'iSentText',
-                                    'message': 'Hi',
-                                    'timeStamp': DateTime.now(),
-                                    'uID': myUID,
-                                  };
-
-                                  dataController!.sendMessageToFirebase(
-                                    data: data,
-                                    groupID: widget.groupID,
-                                    lastMessage: 'Hi',
-                                  );
-                                },
-                                child: Container(
-                                  width: 300,
-                                  height: 200,
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        blurRadius: 5,
-                                        spreadRadius: 1,
-                                        offset: const Offset(0, 0),
-                                      )
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        'No message send yet...',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 15),
-                                      const Text(
-                                        'Send a message or tab to the greeting!',
-                                        textAlign: TextAlign.justify,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.black54,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Image.asset(
-                                        greetingImage,
-                                        height: 100,
-                                        width: 100,
-                                      ),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                              setState(() {
+                                isSendMessage = true;
+                              });
+                            });
                           } else {
                             return ListView.builder(
                               reverse: true,
@@ -250,70 +192,7 @@ class _MessageViewState extends State<MessageView> {
                             );
                           }
                         } else {
-                          return ListView.builder(
-                            reverse: true,
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 20,
-                                    ),
-                                    child: Shimmer.fromColors(
-                                      baseColor: Colors.grey,
-                                      highlightColor: Colors.white,
-                                      direction: ShimmerDirection.ltr,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(
-                                          right: 10,
-                                          left: 150,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.only(
-                                            bottomRight: Radius.circular(18),
-                                            bottomLeft: Radius.circular(18),
-                                            topRight: Radius.zero,
-                                            topLeft: Radius.circular(18),
-                                          ),
-                                          color: Colors.grey.withOpacity(.5),
-                                        ),
-                                        width: double.infinity,
-                                        height: 50,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 20,
-                                    ),
-                                    child: Shimmer.fromColors(
-                                      baseColor: Colors.grey,
-                                      highlightColor: Colors.white,
-                                      direction: ShimmerDirection.ltr,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(
-                                          right: 150,
-                                          left: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.only(
-                                            bottomRight: Radius.circular(18),
-                                            bottomLeft: Radius.circular(18),
-                                            topRight: Radius.circular(18),
-                                            topLeft: Radius.zero,
-                                          ),
-                                          color: Colors.grey.withOpacity(.5),
-                                        ),
-                                        width: double.infinity,
-                                        height: 50,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          return Container();
                         }
                       },
                       stream: FirebaseFirestore.instance
@@ -382,6 +261,9 @@ class _MessageViewState extends State<MessageView> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          onFieldSubmitted: (value) {
+                            sendMessage();
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -441,25 +323,7 @@ class _MessageViewState extends State<MessageView> {
                           SizedBox(width: screenWidth * 0.03),
                           InkWell(
                             onTap: () {
-                              if (messageController.text.isEmpty) {
-                                return;
-                              }
-
-                              String message = messageController.text;
-                              messageController.clear();
-
-                              Map<String, dynamic> data = {
-                                'type': 'iSentText',
-                                'message': message,
-                                'timeStamp': DateTime.now(),
-                                'uID': myUID,
-                              };
-
-                              dataController!.sendMessageToFirebase(
-                                data: data,
-                                groupID: widget.groupID,
-                                lastMessage: message,
-                              );
+                              sendMessage();
                             },
                             child: SizedBox(
                               width: 41,
@@ -564,6 +428,28 @@ class _MessageViewState extends State<MessageView> {
 
       dataController!.isMessageSending(false);
     }
+  }
+
+  void sendMessage() {
+    if (messageController.text.isEmpty) {
+      return;
+    }
+
+    String message = messageController.text;
+    messageController.clear();
+
+    Map<String, dynamic> data = {
+      'type': 'iSentText',
+      'message': message,
+      'timeStamp': DateTime.now(),
+      'uID': myUID,
+    };
+
+    dataController!.sendMessageToFirebase(
+      data: data,
+      groupID: widget.groupID,
+      lastMessage: message,
+    );
   }
 }
 
