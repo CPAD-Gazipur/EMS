@@ -246,16 +246,18 @@ class DataController extends GetxController {
     isMessageSending(false);
   }
 
-  deleteMessageFromFirebaseDatabase(
-    DocumentSnapshot doc,
-    String groupID,
-    String imagePath,
-  ) async {
-    await FirebaseStorage.instance
-        .refFromURL(imagePath)
-        .delete()
-        .then((value) => debugPrint('Image Deleted'))
-        .catchError((e) => debugPrint('Error: $e'));
+  deleteMessageFromFirebaseDatabase({
+    required DocumentSnapshot doc,
+    required String groupID,
+    String? imagePath,
+  }) async {
+    if (imagePath != null) {
+      await FirebaseStorage.instance
+          .refFromURL(imagePath)
+          .delete()
+          .then((value) => debugPrint('Image Deleted'))
+          .catchError((e) => debugPrint('Error: $e'));
+    }
 
     await FirebaseFirestore.instance
         .collection('chats')
@@ -265,6 +267,30 @@ class DataController extends GetxController {
         .delete()
         .then((value) => debugPrint('Message Deleted'))
         .catchError((e) => debugPrint('Error: $e'));
+  }
+
+  clearAllChatFromFirebase({
+    required String groupID,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(groupID)
+        .collection('chatroom')
+        .get()
+        .then((snapshot) {
+      for (DocumentSnapshot doc in snapshot.docs) {
+        doc.reference.delete();
+      }
+      debugPrint('Chat Deleted');
+    }).catchError((e) {
+      debugPrint('Error: $e');
+    });
+
+    await FirebaseFirestore.instance.collection('chats').doc(groupID).set({
+      'lastMessage': 'No last Message',
+      'groupID': groupID,
+      'group': groupID.split('-'),
+    }, SetOptions(merge: true));
   }
 
   @override
