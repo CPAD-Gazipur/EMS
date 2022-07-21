@@ -112,24 +112,26 @@ class _MessageViewState extends State<MessageView> {
                           List<DocumentSnapshot> data =
                               snapshot.data!.docs.reversed.toList();
                           if (data.isEmpty) {
-                            return ChatNoMessage(onSendMessage: () {
-                              Map<String, dynamic> data = {
-                                'type': 'iSentText',
-                                'message': 'Hi',
-                                'timeStamp': DateTime.now(),
-                                'uID': myUID,
-                              };
+                            return ChatNoMessage(
+                              onSendMessage: () {
+                                Map<String, dynamic> data = {
+                                  'type': 'iSentText',
+                                  'message': 'Hi',
+                                  'timeStamp': DateTime.now(),
+                                  'uID': myUID,
+                                };
 
-                              dataController!.sendMessageToFirebase(
-                                data: data,
-                                groupID: widget.groupID,
-                                lastMessage: 'Hi',
-                              );
+                                dataController!.sendMessageToFirebase(
+                                  data: data,
+                                  groupID: widget.groupID,
+                                  lastMessage: 'Hi',
+                                );
 
-                              setState(() {
-                                isSendMessage = true;
-                              });
-                            });
+                                setState(() {
+                                  isSendMessage = true;
+                                });
+                              },
+                            );
                           } else {
                             return ListView.builder(
                               reverse: true,

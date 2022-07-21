@@ -55,7 +55,7 @@ class ChatNoMessage extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               const Text(
-                'Send a message or tab to the greeting!',
+                'Send a message or tap to the greeting!',
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontSize: 13,
