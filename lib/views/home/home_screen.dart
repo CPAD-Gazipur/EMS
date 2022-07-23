@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    analytics.setCurrentScreen(screenName: 'Home Screen');
+    analytics.setCurrentScreen(screenName: 'HomeScreen');
   }
 
   @override

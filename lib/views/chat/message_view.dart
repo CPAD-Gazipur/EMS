@@ -85,6 +85,9 @@ class _MessageViewState extends State<MessageView> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+
+    debugPrint('ProfileImage: ${widget.image}');
+
     return Scaffold(
       appBar: CustomAppBar(
         name: widget.name!,
@@ -331,7 +334,8 @@ class _MessageViewState extends State<MessageView> {
                               width: 41,
                               height: 41,
                               child: Image.asset(
-                                  'assets/images/blackSendIcon.png'),
+                                'assets/images/blackSendIcon.png',
+                              ),
                             ),
                           ),
                         ],
@@ -515,25 +519,32 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   );
                 },
-                child: CircleAvatar(
-                  radius: 20,
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    fit: BoxFit.contain,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
+                child: image.isEmpty
+                    ? const CircleAvatar(
+                        radius: 20,
+                        child: Icon(Icons.person),
+                      )
+                    : CircleAvatar(
+                        radius: 20,
+                        child: CachedNetworkImage(
+                          imageUrl: image,
+                          fit: BoxFit.contain,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
                       ),
-                    ),
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                  ),
-                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -644,6 +655,8 @@ class ImageDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('DialogImage: $imageURL');
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: CachedNetworkImage(
@@ -924,6 +937,7 @@ class ImageMessageISent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String imageLink = doc.get('message');
+    debugPrint('ImageMessageISent: $imageLink');
     Timestamp time = doc.get('timeStamp') as Timestamp;
     bool isHorizontalImage = doc.get('isHorizontalImage');
     DateTime dateTime = time.toDate();
@@ -1068,6 +1082,7 @@ class ImageMessageIGot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String imageLink = doc.get('message');
+    debugPrint('ImageMessageIGot: $imageLink');
     bool isHorizontalImage = doc.get('isHorizontalImage');
     Timestamp time = doc.get('timeStamp') as Timestamp;
     DateTime dateTime = time.toDate();

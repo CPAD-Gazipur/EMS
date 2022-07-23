@@ -248,7 +248,7 @@ class _ChattingViewState extends State<ChattingView> {
                                       ),
                                       SizedBox(width: Get.width * 0.05),
                                       Image(
-                                        image: AssetImage(
+                                        image: const AssetImage(
                                             'assets/images/camera.png'),
                                         width: screenWidth * 0.1,
                                         height: screenHeight * 0.1,

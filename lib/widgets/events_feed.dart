@@ -76,6 +76,7 @@ class EventFeeds extends StatelessWidget {
 
     try {
       profileImage = user.get('image');
+      debugPrint('ProfileImage: $profileImage');
     } catch (e) {
       profileImage = '';
     }
@@ -85,6 +86,7 @@ class EventFeeds extends StatelessWidget {
       Map mediaMap =
           media.firstWhere((element) => element['isImage'] == true) as Map;
       eventImage = mediaMap['url'];
+      debugPrint('EventImage: $eventImage');
     } catch (e) {
       eventImage = '';
     }
@@ -112,7 +114,9 @@ class EventFeeds extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   placeholder: (context, url) => const Center(
@@ -138,25 +142,27 @@ class EventFeeds extends StatelessWidget {
           height: Get.height * 0.01,
         ),
         buildCard(
-            image: eventImage,
-            eventName: event.get('event_name'),
-            eventData: event,
-            user: user,
-            onEventClick: () {
-              Get.to(
-                () => EventPageView(
-                  eventData: event,
-                  user: user,
-                ),
-              );
-              analytics.logEvent(name: 'EventClicked', parameters: {
-                'event_name':
-                    event.get('event_name').toString().replaceAll(' ', '_'),
-              });
+          image: eventImage,
+          eventName: event.get('event_name'),
+          eventData: event,
+          user: user,
+          onEventClick: () {
+            Get.to(
+              () => EventPageView(
+                eventData: event,
+                user: user,
+              ),
+            );
 
-              debugPrint(
-                  event.get('event_name').toString().replaceAll(' ', '_'));
-            }),
+            analytics.logEvent(name: 'EventClicked', parameters: {
+              'event_name':
+                  event.get('event_name').toString().replaceAll(' ', '_'),
+            });
+
+            debugPrint(
+                'Event Clicked: ${event.get('event_name').toString().replaceAll(' ', '_')}');
+          },
+        ),
         const SizedBox(
           height: 15,
         ),

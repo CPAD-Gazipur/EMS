@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 
 import '../../controller/controller.dart';
 import '../../service/service.dart';
-import '../event_view/create_event_view.dart';
 import '../view.dart';
 
 class HomeBottomBarScreen extends StatefulWidget {
@@ -105,6 +104,32 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    if (currentIndex > 0) {
+      onItemTap(0);
+      return false;
+    } else {
+      return (await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Are you sure?'),
+              content: const Text('Do you want to exit?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Yes'),
+                ),
+              ],
+            ),
+          )) ??
+          false;
+    }
+  }
+
   @override
   initState() {
     super.initState();
@@ -123,80 +148,83 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: widgetOption[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onItemTap,
-        selectedItemColor: Colors.black,
-        currentIndex: currentIndex,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Image.asset(
-                currentIndex == 0
-                    ? 'assets/images/home_bottom_nav_fill.png'
-                    : 'assets/images/home_bottom_nav.png',
-                height: 22,
-                width: 22,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: widgetOption[currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: onItemTap,
+          selectedItemColor: Colors.black,
+          currentIndex: currentIndex,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Image.asset(
+                  currentIndex == 0
+                      ? 'assets/images/home_bottom_nav_fill.png'
+                      : 'assets/images/home_bottom_nav.png',
+                  height: 22,
+                  width: 22,
+                ),
               ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Image.asset(
-                currentIndex == 1
-                    ? 'assets/images/navigator_bottom_nav_fill.png'
-                    : 'assets/images/navigator_bottom_nav.png',
-                height: 22,
-                width: 22,
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Image.asset(
+                  currentIndex == 1
+                      ? 'assets/images/navigator_bottom_nav_fill.png'
+                      : 'assets/images/navigator_bottom_nav.png',
+                  height: 22,
+                  width: 22,
+                ),
               ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Image.asset(
-                currentIndex == 2
-                    ? 'assets/images/add_bottom_nav_fill.png'
-                    : 'assets/images/add_bottom_nav.png',
-                height: 22,
-                width: 22,
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Image.asset(
+                  currentIndex == 2
+                      ? 'assets/images/add_bottom_nav_fill.png'
+                      : 'assets/images/add_bottom_nav.png',
+                  height: 22,
+                  width: 22,
+                ),
               ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Image.asset(
-                currentIndex == 3
-                    ? 'assets/images/chat_bottom_nav_fill.png'
-                    : 'assets/images/chat_bottom_nav.png',
-                height: 22,
-                width: 22,
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Image.asset(
+                  currentIndex == 3
+                      ? 'assets/images/chat_bottom_nav_fill.png'
+                      : 'assets/images/chat_bottom_nav.png',
+                  height: 22,
+                  width: 22,
+                ),
               ),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Image.asset(
-                currentIndex == 4
-                    ? 'assets/images/profile_bottom_nav_fill.png'
-                    : 'assets/images/profile_bottom_nav.png',
-                height: 22,
-                width: 22,
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Image.asset(
+                  currentIndex == 4
+                      ? 'assets/images/profile_bottom_nav_fill.png'
+                      : 'assets/images/profile_bottom_nav.png',
+                  height: 22,
+                  width: 22,
+                ),
               ),
+              label: '',
             ),
-            label: '',
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
