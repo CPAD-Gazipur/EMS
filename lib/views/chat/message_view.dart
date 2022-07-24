@@ -42,6 +42,7 @@ class _MessageViewState extends State<MessageView> {
   bool isSendingMessage = false;
   bool isEmojiPickerOpen = false;
   bool isSendMessage = false;
+  bool isReplying = false;
 
   File? profileImage;
 
@@ -64,14 +65,20 @@ class _MessageViewState extends State<MessageView> {
     messageController
       ..text += emoji.emoji
       ..selection = TextSelection.fromPosition(
-          TextPosition(offset: messageController.text.length));
+        TextPosition(
+          offset: messageController.text.length,
+        ),
+      );
   }
 
   onBackSpacePressed() {
     messageController
       ..text = messageController.text.characters.skipLast(1).toString()
       ..selection = TextSelection.fromPosition(
-          TextPosition(offset: messageController.text.length));
+        TextPosition(
+          offset: messageController.text.length,
+        ),
+      );
   }
 
   @override
@@ -158,6 +165,21 @@ class _MessageViewState extends State<MessageView> {
                                         },
                                       );
                                       break;
+                                    case 'iSentReply':
+                                      messageWidget = ISendReplyTextMessage(
+                                        doc: data[index],
+                                        receiverName: widget.name!,
+                                        screenHeight: screenHeight,
+                                        screenWidth: screenWidth,
+                                        onDeletePressed: () {
+                                          dataController!
+                                              .deleteMessageFromFirebaseDatabase(
+                                            doc: data[index],
+                                            groupID: widget.groupID!,
+                                          );
+                                        },
+                                      );
+                                      break;
                                     case 'iSentImage':
                                       messageWidget = ImageMessageISent(
                                         doc: data[index],
@@ -180,7 +202,34 @@ class _MessageViewState extends State<MessageView> {
                                     case 'iSentText':
                                       messageWidget = TextMessageIGot(
                                         doc: data[index],
+                                        confirmDismiss: (value) async {
+                                          replyMessage =
+                                              data[index].get('message');
+                                          await Future.delayed(
+                                            const Duration(milliseconds: 500),
+                                          );
+                                          openKeyBoard();
+                                          setState(() {
+                                            isReplying = true;
+                                          });
+                                          return false;
+                                        },
                                       );
+                                      break;
+                                    case 'iSentReply':
+                                      messageWidget = IGotReplyTextMessage(
+                                        doc: data[index],
+                                        screenHeight: screenHeight,
+                                        screenWidth: screenWidth,
+                                        onDeletePressed: () {
+                                          dataController!
+                                              .deleteMessageFromFirebaseDatabase(
+                                            doc: data[index],
+                                            groupID: widget.groupID!,
+                                          );
+                                        },
+                                      );
+                                      ;
                                       break;
                                     case 'iSentImage':
                                       messageWidget = ImageMessageIGot(
@@ -209,16 +258,81 @@ class _MessageViewState extends State<MessageView> {
                     ),
             ),
           ),
+          isReplying
+              ? AnimatedContainer(
+                  height: isReplying ? 50 : 0,
+                  duration: const Duration(milliseconds: 600),
+                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 9,
+                      blurRadius: 9,
+                      offset: const Offset(3, 0),
+                    ),
+                  ]),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 25,
+                      right: 25,
+                      top: 10,
+                      bottom: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Replying to ${widget.name}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              replyMessage,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isReplying = false;
+                              replyMessage = '';
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.black87,
+                            size: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : const SizedBox(),
           Container(
             height: isEmojiPickerOpen ? 300 : 75,
             decoration: BoxDecoration(
               boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 9,
-                  blurRadius: 9,
-                  offset: const Offset(3, 0),
-                ),
+                isReplying
+                    ? const BoxShadow(
+                        color: Colors.transparent,
+                      )
+                    : BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 9,
+                        blurRadius: 9,
+                        offset: const Offset(3, 0),
+                      ),
               ],
               color: Colors.white,
             ),
@@ -438,6 +552,10 @@ class _MessageViewState extends State<MessageView> {
 
   void sendMessage() {
     if (messageController.text.isEmpty) {
+      replyMessage = '';
+      setState(() {
+        isReplying = false;
+      });
       return;
     }
 
@@ -450,6 +568,15 @@ class _MessageViewState extends State<MessageView> {
       'timeStamp': DateTime.now(),
       'uID': myUID,
     };
+
+    if (replyMessage.isNotEmpty) {
+      data['reply'] = replyMessage;
+      data['type'] = 'iSentReply';
+      replyMessage = '';
+      setState(() {
+        isReplying = false;
+      });
+    }
 
     dataController!.sendMessageToFirebase(
       data: data,
@@ -820,10 +947,12 @@ class TextMessageISent extends StatelessWidget {
 
 class TextMessageIGot extends StatelessWidget {
   final DocumentSnapshot doc;
+  final Future<bool?> Function(DismissDirection) confirmDismiss;
 
   const TextMessageIGot({
     Key? key,
     required this.doc,
+    required this.confirmDismiss,
   }) : super(key: key);
 
   @override
@@ -837,82 +966,490 @@ class TextMessageIGot extends StatelessWidget {
       padding: const EdgeInsets.only(
         bottom: 8.0,
       ),
+      child: Dismissible(
+        confirmDismiss: confirmDismiss,
+        key: UniqueKey(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FocusedMenuHolder(
+              onPressed: () {},
+              openWithTap: true,
+              animateMenuItems: true,
+              duration: const Duration(microseconds: 100),
+              menuOffset: 10.0,
+              bottomOffsetHeight: 10,
+              blurSize: 1,
+              menuWidth: MediaQuery.of(context).size.width / 2,
+              menuItems: [
+                FocusedMenuItem(
+                  title: const Text(
+                    "Copy Text",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  trailingIcon: const Icon(
+                    Icons.copy,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: message));
+                    Get.showSnackbar(
+                      const GetSnackBar(
+                        message: 'Messaged Copied',
+                        duration: Duration(seconds: 2),
+                        backgroundColor: Colors.black87,
+                      ),
+                    );
+                  },
+                ),
+              ],
+              child: Container(
+                margin: const EdgeInsets.only(
+                  left: 10,
+                  right: 40,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(18),
+                    topRight: Radius.circular(18),
+                    topLeft: Radius.zero,
+                  ),
+                  color: Colors.grey.withOpacity(0.2),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(
+                left: 25,
+                top: 3,
+              ),
+              child: Text(
+                timeString,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey.withOpacity(0.8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ISendReplyTextMessage extends StatelessWidget {
+  final DocumentSnapshot doc;
+  final String receiverName;
+  final double screenHeight;
+  final double screenWidth;
+  final Function() onDeletePressed;
+
+  const ISendReplyTextMessage({
+    Key? key,
+    required this.doc,
+    required this.receiverName,
+    required this.screenHeight,
+    required this.screenWidth,
+    required this.onDeletePressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String message = doc.get('message');
+    String replyText = doc.get('reply');
+
+    Timestamp time = doc.get('timeStamp') as Timestamp;
+
+    DateTime dateTime = time.toDate();
+    String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
+    return Container(
+      margin: const EdgeInsets.only(
+        top: 5,
+        bottom: 10,
+        right: 20,
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FocusedMenuHolder(
-            onPressed: () {},
-            openWithTap: true,
-            animateMenuItems: true,
-            duration: const Duration(microseconds: 100),
-            menuOffset: 10.0,
-            bottomOffsetHeight: 10,
-            blurSize: 1,
-            menuWidth: MediaQuery.of(context).size.width / 2,
-            menuItems: [
-              FocusedMenuItem(
-                title: const Text(
-                  "Copy Text",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 66,
+              top: 5,
+              right: 12,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Icon(
+                  Icons.reply_outlined,
+                  color: Colors.grey,
+                  size: 14,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'You replied to $receiverName',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
                     color: Colors.grey,
                   ),
                 ),
-                trailingIcon: const Icon(
-                  Icons.copy,
-                  color: Colors.grey,
-                ),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: message));
-                  Get.showSnackbar(
-                    const GetSnackBar(
-                      message: 'Messaged Copied',
-                      duration: Duration(seconds: 2),
-                      backgroundColor: Colors.black87,
-                    ),
-                  );
-                },
-              ),
-            ],
-            child: Container(
-              margin: const EdgeInsets.only(
-                left: 10,
-                right: 40,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(18),
-                  bottomLeft: Radius.circular(18),
-                  topRight: Radius.circular(18),
-                  topLeft: Radius.zero,
-                ),
-                color: Colors.grey.withOpacity(0.2),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Text(
-                  message,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
+              ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(
-              left: 25,
-              top: 3,
-            ),
-            child: Text(
-              timeString,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w400,
-                color: Colors.grey.withOpacity(0.8),
+          SizedBox(
+            height: screenHeight * 0.006,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(
+                      left: 40,
+                      right: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(18),
+                        topLeft: Radius.circular(12),
+                        bottomRight: Radius.zero,
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      color: Colors.grey.withOpacity(0.2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 12,
+                        left: 12,
+                        right: 12,
+                        bottom: 5,
+                      ),
+                      child: Text(
+                        replyText,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      FocusedMenuHolder(
+                        onPressed: () {},
+                        openWithTap: true,
+                        animateMenuItems: true,
+                        duration: const Duration(microseconds: 100),
+                        menuOffset: 10.0,
+                        bottomOffsetHeight: 10,
+                        blurSize: 1,
+                        menuWidth: MediaQuery.of(context).size.width / 2,
+                        menuItems: [
+                          FocusedMenuItem(
+                            title: const Text(
+                              "Copy Text",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            trailingIcon: const Icon(
+                              Icons.copy,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(text: message));
+                              Get.showSnackbar(
+                                const GetSnackBar(
+                                  message: 'Messaged Copied',
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black87,
+                                ),
+                              );
+                            },
+                          ),
+                          FocusedMenuItem(
+                            title: const Text(
+                              "Delete",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            trailingIcon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.grey,
+                            ),
+                            onPressed: onDeletePressed,
+                          ),
+                        ],
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                            right: 10,
+                            left: 40,
+                          ),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(18),
+                              bottomLeft: Radius.circular(18),
+                              topRight: Radius.zero,
+                              topLeft: Radius.circular(18),
+                            ),
+                            color: Colors.blue,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Text(
+                              message,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          right: 25,
+                          top: 3,
+                        ),
+                        child: Text(
+                          timeString,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.withOpacity(0.8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IGotReplyTextMessage extends StatelessWidget {
+  final DocumentSnapshot doc;
+  final double screenHeight;
+  final double screenWidth;
+  final Function() onDeletePressed;
+
+  const IGotReplyTextMessage({
+    Key? key,
+    required this.doc,
+    required this.screenHeight,
+    required this.screenWidth,
+    required this.onDeletePressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String message = doc.get('message');
+    String replyText = doc.get('reply');
+
+    Timestamp time = doc.get('timeStamp') as Timestamp;
+
+    DateTime dateTime = time.toDate();
+    String timeString = DateFormat('hh:mm:ss aa').format(dateTime);
+    return Container(
+      margin: const EdgeInsets.only(
+        top: 5,
+        bottom: 10,
+        right: 20,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12,
+              top: 5,
+              right: 66,
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Text(
+                  'Replied to you',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(width: 5),
+                Icon(
+                  Icons.reply_outlined,
+                  color: Colors.grey,
+                  size: 14,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: screenHeight * 0.006,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(
+                      left: 10,
+                      right: 40,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(18),
+                        topLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                        bottomLeft: Radius.zero,
+                      ),
+                      color: Colors.grey.withOpacity(0.2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 12,
+                        left: 12,
+                        right: 12,
+                        bottom: 5,
+                      ),
+                      child: Text(
+                        replyText,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FocusedMenuHolder(
+                        onPressed: () {},
+                        openWithTap: true,
+                        animateMenuItems: true,
+                        duration: const Duration(microseconds: 100),
+                        menuOffset: 10.0,
+                        bottomOffsetHeight: 10,
+                        blurSize: 1,
+                        menuWidth: MediaQuery.of(context).size.width / 2,
+                        menuItems: [
+                          FocusedMenuItem(
+                            title: const Text(
+                              "Copy Text",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            trailingIcon: const Icon(
+                              Icons.copy,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(text: message));
+                              Get.showSnackbar(
+                                const GetSnackBar(
+                                  message: 'Messaged Copied',
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black87,
+                                ),
+                              );
+                            },
+                          ),
+                          FocusedMenuItem(
+                            title: const Text(
+                              "Delete",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            trailingIcon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.grey,
+                            ),
+                            onPressed: onDeletePressed,
+                          ),
+                        ],
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                            right: 40,
+                            left: 10,
+                          ),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(18),
+                              bottomLeft: Radius.circular(18),
+                              topRight: Radius.circular(18),
+                              topLeft: Radius.zero,
+                            ),
+                            color: Colors.blue,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Text(
+                              message,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          left: 25,
+                          top: 3,
+                        ),
+                        child: Text(
+                          timeString,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.withOpacity(0.8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -1093,7 +1630,7 @@ class ImageMessageIGot extends StatelessWidget {
         bottom: 8.0,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: screenHeight * 0.18,
