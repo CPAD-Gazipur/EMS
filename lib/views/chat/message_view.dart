@@ -598,7 +598,7 @@ class _MessageViewState extends State<MessageView> {
       body: 'message: $message',
       token: userToken,
       route:
-          'message:${widget.userDoc.id}:${widget.groupID}:${widget.name}:${widget.image}',
+          'message,${widget.userDoc.id},${widget.groupID},${widget.name},${widget.image}',
     );
   }
 }

@@ -74,14 +74,14 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     LocalNotificationService.onNotifications.stream.listen((event) async {
       if (event == 'home_bar_screen') {
         //do nothing
-      } else if (event?.split(':')[0] == 'message') {
-        String userID = event!.split(':')[1];
+      } else if (event?.split(',')[0] == 'message') {
+        String userID = event!.split(',')[1];
         debugPrint(userID);
-        String groupID = event.split(':')[2];
+        String groupID = event.split(',')[2];
         debugPrint(groupID);
-        String userName = event.split(':')[3];
+        String userName = event.split(',')[3];
         debugPrint(userName);
-        String userImage = event.split(':')[4];
+        String userImage = event.split(',')[4];
         debugPrint(userImage);
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
