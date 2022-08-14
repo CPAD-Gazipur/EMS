@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:ems/service/service.dart';
 import 'package:ems/widgets/chat_no_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -550,7 +551,7 @@ class _MessageViewState extends State<MessageView> {
     }
   }
 
-  void sendMessage() {
+  void sendMessage() async {
     if (messageController.text.isEmpty) {
       replyMessage = '';
       setState(() {
@@ -582,6 +583,22 @@ class _MessageViewState extends State<MessageView> {
       data: data,
       groupID: widget.groupID,
       lastMessage: message,
+    );
+
+    String userToken = widget.userDoc.get('token');
+    debugPrint('User Token: $userToken');
+
+    DocumentSnapshot myDoc =
+        await FirebaseFirestore.instance.collection('users').doc(myUID).get();
+
+    String myName = myDoc.get('name');
+
+    sendFCMNotification(
+      title: '$myName send you a message',
+      body: 'message: $message',
+      token: userToken,
+      route:
+          'message:${widget.userDoc.id}:${widget.groupID}:${widget.name}:${widget.image}',
     );
   }
 }

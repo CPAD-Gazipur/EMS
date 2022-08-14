@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -98,6 +100,22 @@ class LocalNotificationService {
       );
     } on Exception catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  static storeToken() async {
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+      debugPrint('Token: $e');
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'token': token,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('Error Store Token: $e');
     }
   }
 }

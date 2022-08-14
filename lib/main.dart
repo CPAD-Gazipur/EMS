@@ -62,7 +62,10 @@ class MyApp extends StatelessWidget {
 Future<void> _handleBackgroundMessages(RemoteMessage message) async {
   // Handle background task here
 
-  if (message.messageId != '') {
+  debugPrint('Notification: ${message.data.toString()}');
+  debugPrint('Notification: ${message.notification.toString()}');
+
+  /*if (message.messageId != '') {
     debugPrint(
         "Have received a background message! Will have to grab the message from here somehow if the user didn't interact with the system tray message link");
     SharePreferenceStorage().saveFCMData('GOT NOTIFICATION');
@@ -86,5 +89,5 @@ Future<void> _handleBackgroundMessages(RemoteMessage message) async {
     debugPrint("Key: $keys---- Value: $values");
     SharePreferenceStorage().saveFCMKey(keys);
     SharePreferenceStorage().saveFCMData(values);
-  }
+  }*/
 }

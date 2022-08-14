@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
 
   FirebaseDynamicLinks firebaseDynamicLinks = FirebaseDynamicLinks.instance;
 
-  storeNotificationToken() async {
+  /*storeNotificationToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
 
     FirebaseFirestore.instance
@@ -33,7 +32,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
         .set({
       'token': token,
     }, SetOptions(merge: true));
-  }
+  }*/
 
   initializeDynamicLink() async {
     firebaseDynamicLinks.onLink.listen((dynamicLinkData) {
@@ -72,13 +71,28 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
   }
 
   void listenNotifications() {
-    LocalNotificationService.onNotifications.stream.listen((event) {
-      if (event == 'home_screen') {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => const HomeScreen(),
-          ),
-        );
+    LocalNotificationService.onNotifications.stream.listen((event) async {
+      if (event == 'home_bar_screen') {
+        //do nothing
+      } else if (event?.split(':')[0] == 'message') {
+        String userID = event!.split(':')[1];
+        debugPrint(userID);
+        String groupID = event.split(':')[2];
+        debugPrint(groupID);
+        String userName = event.split(':')[3];
+        debugPrint(userName);
+        String userImage = event.split(':')[4];
+        debugPrint(userImage);
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userID)
+            .get();
+        Get.to(() => MessageView(
+              userDoc: userDoc,
+              groupID: groupID,
+              name: userName,
+              image: userImage,
+            ));
       }
       debugPrint('Notification Clicked: $event');
     });
@@ -98,7 +112,7 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
     //Create popup to display message info (works)
     LocalNotificationService.display(message);
 
-    if (message.messageId != null) {
+    if (message.notification != null) {
       debugPrint('Notification: ${message.notification?.title}');
       debugPrint('Notification: ${message.notification?.body}');
     }
@@ -140,7 +154,8 @@ class _HomeBottomBarScreenState extends State<HomeBottomBarScreen> {
       _handleNotificationInstruction(message);
     });
     _initiateInteractedMessage();
-    storeNotificationToken();
+    LocalNotificationService.storeToken();
+    //storeNotificationToken();
     FirebaseMessaging.instance.subscribeToTopic('subscription');
     initializeDynamicLink();
     analytics.setCurrentScreen(screenName: 'BottomBarScreen');

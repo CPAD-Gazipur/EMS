@@ -9,13 +9,14 @@ sendFCMNotification({
   required String title,
   required String body,
   required String token,
+  String route = 'home_bar_screen',
 }) async {
   final data = {
     'click_action': 'FLUTTER_NOTIFICATION_CLICK',
     'id': '1',
     'status': 'done',
     'message': title,
-    'route': 'home_screen'
+    'route': route,
   };
 
   try {
