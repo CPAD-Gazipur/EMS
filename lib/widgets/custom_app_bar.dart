@@ -72,39 +72,39 @@ class _CustomAppBarState extends State<CustomAppBar> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               notificationCount > 0
-                  ? Badge(
-                      toAnimate: true,
-                      shape: BadgeShape.circle,
-                      animationType: BadgeAnimationType.fade,
-                      badgeColor: Colors.red,
-                      badgeContent: Text(
-                        notificationCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
+                  ? InkWell(
+                      onTap: () {
+                        Get.to(() => const NotificationScreen())!
+                            .whenComplete(() => getNotificationList());
+                      },
+                      child: Badge(
+                        toAnimate: true,
+                        shape: BadgeShape.circle,
+                        animationType: BadgeAnimationType.fade,
+                        badgeColor: Colors.red,
+                        badgeContent: Text(
+                          notificationCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
                         ),
-                      ),
-                      child: SizedBox(
-                        width: 24,
-                        height: 22,
-                        child: InkWell(
-                          onTap: () {
-                            Get.to(() => const NotificationScreen())!
-                                .whenComplete(() => getNotificationList());
-                          },
+                        child: SizedBox(
+                          width: 24,
+                          height: 22,
                           child: Image.asset(
                               'assets/images/notification_icon.png'),
                         ),
                       ),
                     )
-                  : SizedBox(
-                      width: 24,
-                      height: 22,
-                      child: InkWell(
-                        onTap: () {
-                          Get.to(() => const NotificationScreen())!
-                              .whenComplete(() => getNotificationList());
-                        },
+                  : InkWell(
+                      onTap: () {
+                        Get.to(() => const NotificationScreen())!
+                            .whenComplete(() => getNotificationList());
+                      },
+                      child: SizedBox(
+                        width: 24,
+                        height: 22,
                         child:
                             Image.asset('assets/images/notification_icon.png'),
                       ),

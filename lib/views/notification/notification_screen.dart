@@ -22,6 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         child: ListView(
           children: [
             const HeaderTitle(title: 'Notifications'),
+            const SizedBox(height: 10),
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('notifications')
