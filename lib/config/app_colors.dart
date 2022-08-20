@@ -5,6 +5,7 @@ class AppColors {
   static const Color backGroundColor = Color(0xffFFFFFF);
   static const Color loginBackgroundColor = Color(0xFFECF3F9);
   static const Color containerShadow = Color(0xffE1E9FD);
+  static Color genderTextColor = const Color(0xffA6A6A6);
 
   static Color white2 = const Color(0xffEEEEEE);
   static Color whiteGrey = const Color(0xffC3C2C2);

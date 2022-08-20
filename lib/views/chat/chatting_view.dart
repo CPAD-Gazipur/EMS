@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,20 +28,7 @@ class _ChattingViewState extends State<ChattingView> {
         child: SafeArea(
           child: Column(
             children: [
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(
-                  top: Get.width * 0.03,
-                ),
-                child: const Text(
-                  'Message',
-                  style: TextStyle(
-                    fontSize: 23,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              const HeaderTitle(title: 'Message'),
               SizedBox(height: Get.height * 0.03),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

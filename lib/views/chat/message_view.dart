@@ -592,13 +592,19 @@ class _MessageViewState extends State<MessageView> {
         await FirebaseFirestore.instance.collection('users').doc(myUID).get();
 
     String myName = myDoc.get('name');
+    String myImage = myDoc.get('image');
 
     sendFCMNotification(
       title: '$myName send you a message',
       body: 'message: $message',
       token: userToken,
-      route:
-          'message,${widget.userDoc.id},${widget.groupID},${widget.name},${widget.image}',
+      route: 'message,${myDoc.id},${widget.groupID},$myName,$myImage',
+    );
+
+    dataController!.createNotificationToFirebaseStorage(
+      receiverUID: widget.userDoc.id,
+      senderName: myName,
+      senderImage: myImage,
     );
   }
 }
@@ -1406,20 +1412,6 @@ class IGotReplyTextMessage extends StatelessWidget {
                                 ),
                               );
                             },
-                          ),
-                          FocusedMenuItem(
-                            title: const Text(
-                              "Delete",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            trailingIcon: const Icon(
-                              Icons.delete_outline,
-                              color: Colors.grey,
-                            ),
-                            onPressed: onDeletePressed,
                           ),
                         ],
                         child: Container(

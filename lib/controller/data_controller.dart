@@ -246,6 +246,24 @@ class DataController extends GetxController {
     isMessageSending(false);
   }
 
+  void createNotificationToFirebaseStorage({
+    required String receiverUID,
+    required String senderName,
+    required String senderImage,
+  }) {
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(receiverUID)
+        .collection('MyNotifications')
+        .add({
+      'message': 'send you a message.',
+      'senderName': senderName,
+      'senderImage': senderImage,
+      'time': DateTime.now(),
+      'isClicked': false,
+    });
+  }
+
   deleteMessageFromFirebaseDatabase({
     required DocumentSnapshot doc,
     required String groupID,
