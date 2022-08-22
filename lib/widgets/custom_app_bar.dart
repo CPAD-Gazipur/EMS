@@ -15,40 +15,6 @@ class CustomAppBar extends StatefulWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  late int notificationCount;
-
-  @override
-  void initState() {
-    getNotificationList();
-    super.initState();
-  }
-
-  void getNotificationList() async {
-    notificationCount = 0;
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('notifications')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('MyNotifications')
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      for (var notification in querySnapshot.docs) {
-        if (notification.get('isClicked') == false) {
-          setState(() {
-            notificationCount++;
-          });
-        }
-      }
-    } else {
-      setState(() {
-        notificationCount = 0;
-      });
-    }
-
-    setState(() {});
-    debugPrint('Notification Count: $notificationCount');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,44 +37,73 @@ class _CustomAppBarState extends State<CustomAppBar> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              notificationCount > 0
-                  ? InkWell(
-                      onTap: () {
-                        Get.to(() => const NotificationScreen())!
-                            .whenComplete(() => getNotificationList());
-                      },
-                      child: Badge(
-                        toAnimate: true,
-                        shape: BadgeShape.circle,
-                        animationType: BadgeAnimationType.fade,
-                        badgeColor: Colors.red,
-                        badgeContent: Text(
-                          notificationCount.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                          ),
-                        ),
+              StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('notifications')
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection('MyNotifications')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return InkWell(
+                        onTap: () {
+                          Get.to(() =>
+                                  const NotificationScreen()) /*!
+                              .whenComplete(() => getNotificationList())*/
+                              ;
+                        },
                         child: SizedBox(
                           width: 24,
                           height: 22,
                           child: Image.asset(
                               'assets/images/notification_icon.png'),
                         ),
-                      ),
-                    )
-                  : InkWell(
-                      onTap: () {
-                        Get.to(() => const NotificationScreen())!
-                            .whenComplete(() => getNotificationList());
-                      },
-                      child: SizedBox(
-                        width: 24,
-                        height: 22,
-                        child:
-                            Image.asset('assets/images/notification_icon.png'),
-                      ),
-                    ),
+                      );
+                    }
+
+                    QuerySnapshot querySnapshot = snapshot.data!;
+                    var doc = querySnapshot.docs
+                        .where((element) => element.get('isClicked') == false);
+
+                    debugPrint('Notification Count: ${doc.length}');
+
+                    return doc.isNotEmpty
+                        ? InkWell(
+                            onTap: () {
+                              Get.to(() => const NotificationScreen());
+                            },
+                            child: Badge(
+                              toAnimate: true,
+                              shape: BadgeShape.circle,
+                              animationType: BadgeAnimationType.fade,
+                              badgeColor: Colors.red,
+                              badgeContent: Text(
+                                '${doc.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
+                              child: SizedBox(
+                                width: 24,
+                                height: 22,
+                                child: Image.asset(
+                                    'assets/images/notification_icon.png'),
+                              ),
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              Get.to(() => const NotificationScreen());
+                            },
+                            child: SizedBox(
+                              width: 24,
+                              height: 22,
+                              child: Image.asset(
+                                  'assets/images/notification_icon.png'),
+                            ),
+                          );
+                  }),
               const SizedBox(
                 width: 15,
               ),
